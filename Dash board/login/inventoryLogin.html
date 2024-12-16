@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login & Sign Up</title>
+    <link rel="stylesheet" href="inventa1.css">
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDeyt839rDGcoH3LwRWuc65_CUg6D6S5XE",
+            authDomain: "test-8cd9e.firebaseapp.com",
+            projectId: "test-8cd9e",
+            storageBucket: "test-8cd9e.appspot.com",
+            messagingSenderId: "745412020745",
+            appId: "1:745412020745:web:701eed8c9075a3572c86d8",
+            measurementId: "G-91P7MY8658"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth();
+        const db = getFirestore();
+
+        // Validate email format
+        const isValidEmail = (email) => /\S+@\S+\.\S+/.test(email);
+
+        // Show an alert with a user-friendly error message
+        const showError = (message) => {
+            alert(`Error: ${message}`);
+        };
+
+        // Handle registration
+        const handleRegister = async () => {
+            const username = document.getElementById("registerUsername").value.trim();
+            const email = document.getElementById("registerEmail").value.trim();
+            const password = document.getElementById("registerPassword").value.trim();
+
+            if (!username) return showError("Please enter a username.");
+            if (!email || !isValidEmail(email)) return showError("Please enter a valid email address.");
+            if (!password || password.length < 6) return showError("Password must be at least 6 characters long.");
+
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                // Store user data in Firestore
+                await setDoc(doc(db, "users", user.uid), { username, email, uid: user.uid });
+
+                alert("Registration successful!");
+                console.log("User registered:", user);
+
+                // Clear form fields
+                document.getElementById("registerUsername").value = "";
+                document.getElementById("registerEmail").value = "";
+                document.getElementById("registerPassword").value = "";
+            } catch (error) {
+                console.error("Registration error:", error);
+                showError(error.message);
+            }
+        };
+
+        // Handle login
+        const handleLogin = async () => {
+            const email = document.getElementById("loginUsername").value.trim();
+            const password = document.getElementById("loginPassword").value.trim();
+
+            if (!email || !isValidEmail(email)) return showError("Please enter a valid email address.");
+            if (!password) return showError("Please enter your password.");
+
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                alert("Login successful!");
+                console.log("User logged in:", userCredential.user);
+
+                // Clear form fields
+                document.getElementById("loginUsername").value = "";
+                document.getElementById("loginPassword").value = "";
+
+                // Redirect to the dashboard
+                window.location.href = "file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Home%20page/home.html";
+            } catch (error) {
+                console.error("Login error:", error);
+                showError(error.message);
+            }
+        };
+
+        // Attach event listeners once DOM is loaded
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("registerSubmit").addEventListener("click", handleRegister);
+            document.getElementById("loginSubmit").addEventListener("click", handleLogin);
+
+            // Form toggle logic
+            document.getElementById("goToRegister").addEventListener("click", () => {
+                document.getElementById("loginForm").style.display = "none";
+                document.getElementById("registerForm").style.display = "block";
+            });
+
+            document.getElementById("goToLogin").addEventListener("click", () => {
+                document.getElementById("registerForm").style.display = "none";
+                document.getElementById("loginForm").style.display = "block";
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="box">
+        <div class="form-container">
+            <!-- Login Form -->
+            <div id="loginForm" class="form">
+                <h2>Login</h2>
+                <form id="loginFormContent">
+                    <div class="inputbox">
+                        <input type="email" id="loginUsername" required>
+                        <span>Email</span>
+                    </div>
+                    <div class="inputbox">
+                        <input type="password" id="loginPassword" required>
+                        <span>Password</span>
+                    </div>
+                    <input type="button" value="Login" class="sub" id="loginSubmit">
+                    <p class="toggle-text">Don't have an account? <a href="javascript:void(0);" id="goToRegister">Sign Up</a></p>
+                </form>
+            </div>
+
+            <!-- Registration Form -->
+            <div id="registerForm" class="form" style="display: none;">
+                <h2>Sign Up</h2>
+                <form id="registerFormContent">
+                    <div class="inputbox">
+                        <input type="text" id="registerUsername" required>
+                        <span>Username</span>
+                    </div>
+                    <div class="inputbox">
+                        <input type="email" id="registerEmail" required>
+                        <span>Email</span>
+                    </div>
+                    <div class="inputbox">
+                        <input type="password" id="registerPassword" required>
+                        <span>Password</span>
+                    </div>
+                    <input type="button" value="Register" class="sub" id="registerSubmit">
+                    <p class="toggle-text">Already have an account? <a href="javascript:void(0);" id="goToLogin">Login</a></p>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

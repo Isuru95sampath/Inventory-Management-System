@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login & Sign Up</title>
+    <link rel="stylesheet" href="inventa1.css">
+</head>
+<body>
+
+    <div class="box">
+        <div class="form-container">
+            <!-- Login Form -->
+            <div id="loginForm" class="form">
+                <h2>Login</h2>
+                <form id="loginFormContent">
+                    <div class="inputbox">
+                        <input type="text" id="loginUsername" required>
+                        <span>Username</span>
+                    </div>
+                    <div class="inputbox">
+                        <input type="password" id="loginPassword" required>
+                        <span>Password</span>
+                    </div>
+                    <input type="submit" value="Login" class="sub" id="loginSubmit">
+                    <p class="toggle-text">Don't have an account? <a href="javascript:void(0);" id="goToRegister">Sign Up</a></p>
+                </form>
+            </div>
+
+            <!-- Registration Form -->
+            <div id="registerForm" class="form" style="display: none;">
+                <h2>Sign Up</h2>
+                <form id="registerFormContent">
+                    <div class="inputbox">
+                        <input type="text" id="registerUsername" required>
+                        <span>Username</span>
+                    </div>
+                    <div class="inputbox">
+                        <input type="email" id="registerEmail" required>
+                        <span>Email</span>
+                    </div>
+                    <div class="inputbox">
+                        <input type="password" id="registerPassword" required>
+                        <span>Password</span>
+                    </div>
+                    <input type="submit" value="Register" class="sub" id="registerSubmit">
+                    <p class="toggle-text">Already have an account? <a href="javascript:void(0);" id="goToLogin">Login</a></p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Import Firebase SDKs
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBcf485r9MQMUvGu9CeersggFc54clzfZY",
+            authDomain: "inventrymanagment.firebaseapp.com",
+            databaseURL: "https://inventrymanagment-default-rtdb.firebaseio.com",
+            projectId: "inventrymanagment",
+            storageBucket: "inventrymanagment.appspot.com",
+            messagingSenderId: "1098731236731",
+            appId: "1:1098731236731:web:782e5be78b01ada39b61de"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // Toggle to Registration Form
+        document.getElementById('goToRegister').addEventListener('click', function() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'block';
+        });
+
+        // Toggle to Login Form
+        document.getElementById('goToLogin').addEventListener('click', function() {
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'block';
+        });
+
+        // Handle Login Form Submission
+        document.getElementById('loginFormContent').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const username = document.getElementById("loginUsername").value;
+            const password = document.getElementById("loginPassword").value;
+
+            if (username && password) {
+                get(ref(db, 'users/' + username)).then((snapshot) => {
+                    if (snapshot.exists()) {
+                        const userData = snapshot.val();
+                        if (userData.password === password) {
+                            alert("Login successful!");
+                            // Redirect to home page after successful login
+                            window.location.href = "http://127.0.0.1:5500/inventoryhome.html?";
+                        } else {
+                            alert("Invalid username or password.");
+                        }
+                    } else {
+                        alert("User does not exist.");
+                    }
+                }).catch((error) => {
+                    console.error("Error fetching data:", error);
+                    alert("Error fetching data. Please try again.");
+                });
+            } else {
+                alert("Please fill in all fields.");
+            }
+        });
+
+        // Handle Registration Form Submission
+        document.getElementById('registerFormContent').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const username = document.getElementById("registerUsername").value;
+            const email = document.getElementById("registerEmail").value;
+            const password = document.getElementById("registerPassword").value;
+
+            // Email validation to ensure it ends with @gmail.com
+            const emailPattern = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+            if (!emailPattern.test(email)) {
+                alert("Please enter a valid Gmail address (e.g. example@gmail.com).");
+                return;
+            }
+
+            if (username && email && password) {
+                set(ref(db, 'users/' + username), {
+                    username: username,
+                    email: email,
+                    password: password
+                }).then(() => {
+                    alert("Registration successful!");
+                    document.getElementById('registerForm').style.display = 'none';
+                    document.getElementById('loginForm').style.display = 'block';
+                }).catch((error) => {
+                    console.error("Error saving data:", error);
+                    alert("Error saving data. Please try again.");
+                });
+            } else {
+                alert("Please fill in all fields.");
+            }
+        });
+    </script>
+
+</body>
+</html>
