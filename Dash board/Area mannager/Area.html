@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Area Manager</title>
+    <link rel="stylesheet" href="Area.css">
+</head>
+<body>
+    <h1><u>Area Manager</u></h1>
+    <div class="container">
+        <h3>Select Area Manager ID</h3>
+        <div class="dropdown">
+            <button class="dropbtn">Select ID</button>
+            <div class="dropdown-content">
+                <a href="file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Aea2/area2.html">Kamal Perera</a>
+                <a href="#" onclick="openPage('page2.html')">Lasantha Kumara</a>
+                <a href="#" onclick="openPage('page3.html')">Hiran Sampath</a>
+            </div>
+        </div>
+    </div>
+    <iframe id="contentFrame" src="" style="width:100%; height:1px; border:none;"></iframe>
+
+    <!-- Inventory Section -->
+    <section id="inventory">
+        <h2>Area Manager Stock</h2>
+        <table id="inventory-table">
+            <thead>
+                <tr>
+                    <th>Product ID</th>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                </tr>
+            </thead>
+            <tbody id="inventoryBody">
+                <!-- Inventory items will be populated here -->
+            </tbody>
+        </table>
+    </section>
+
+    <!-- Requested Items Section -->
+    <section id="performance">
+        <h2>Requested Items</h2>
+        <table id="performance-table">
+            <thead>
+                <tr>
+                    <th>Shop ID</th>
+                    <th>Product ID</th>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                </tr>
+            </thead>
+            <tbody id="performanceBody">
+                <!-- Requested items will be populated here -->
+            </tbody>
+        </table>
+    </section>
+
+    <div class="homebtn">
+        <button onclick="location.href='file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Home%20page/home.html#report'">Home</button>
+    </div>
+
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDeyt839rDGcoH3LwRWuc65_CUg6D6S5XE",
+            authDomain: "test-8cd9e.firebaseapp.com",
+            projectId: "test-8cd9e",
+            storageBucket: "test-8cd9e.appspot.com",
+            messagingSenderId: "745412020745",
+            appId: "1:745412020745:web:701eed8c9075a3572c86d8",
+            measurementId: "G-91P7MY8658"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Function to load data into the Inventory table
+        const loadInventoryData = async () => {
+            try {
+                console.log("Loading inventory data...");
+                const inventoryBody = document.getElementById('inventoryBody');
+                inventoryBody.innerHTML = ""; // Clear existing rows
+
+                const querySnapshot = await getDocs(collection(db, "areamanager_enter_data"));
+                querySnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${data.product_id || ""}</td>
+                        <td>${data.product_name || ""}</td>
+                        <td>${data.quantity || ""}</td>
+                    `;
+                    inventoryBody.appendChild(row);
+                });
+
+                console.log("Inventory data loaded successfully!");
+            } catch (error) {
+                console.error("Error loading inventory data:", error);
+            }
+        };
+
+        // Function to load data into the Requested Items table
+        const loadRequestedItemsData = async () => {
+            try {
+                console.log("Loading requested items...");
+                const performanceBody = document.getElementById('performanceBody');
+                performanceBody.innerHTML = ""; // Clear existing rows
+
+                const querySnapshot = await getDocs(collection(db, "requestedItems"));
+                querySnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${data.shop_id || ""}</td>
+                        <td>${data.product_id || ""}</td>
+                        <td>${data.product_name || ""}</td>
+                        <td>${data.quantity || ""}</td>
+                    `;
+                    performanceBody.appendChild(row);
+                });
+
+                console.log("Requested items data loaded successfully!");
+            } catch (error) {
+                console.error("Error loading requested items data:", error);
+            }
+        };
+
+        // Load data on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            loadInventoryData();
+            loadRequestedItemsData();
+        });
+    </script>
+</body>
+</html>
