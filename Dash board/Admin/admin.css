@@ -6,6 +6,7 @@ body {
     text-align: center;
     background: linear-gradient(to bottom right, #007BFF, #6C757D);
     color: #333;
+    background-image: url(Background.webp);
 }
 
 /* Header Styling */
@@ -79,7 +80,7 @@ p{
 }
 
 .homebtn:hover {
-    background-color: #0056b3; /
+    background-color: #0056b3; 
     transform: scale(1.05); 
 }
 
