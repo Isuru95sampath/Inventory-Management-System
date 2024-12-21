@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Area Manager</title>
+    <link rel="stylesheet" href="area2.css">
+</head>
+<body>
+    <h1><u>Area Manager</u></h1>
+    
+    <iframe id="contentFrame" src="" style="width:100%; height:40px; border:none;"></iframe>
+
+    <table id="dataTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Area Name</th>
+                <th>Select District of Area Manager</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+            <tr contenteditable="true">
+                <td contenteditable="true"></td>
+                <td contenteditable="true"></td>
+                <td contenteditable="true"></td>
+                <td>
+                    <select onchange="navigateToDistrict(this)">
+                        <option value="">Select District</option>
+                        <option value="file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Sales%20rep/Rep%20Home/rep1/rep1.html">Colombo</option>
+                        <option value="file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Sales%20rep/Rep%20Home/rep2/rep2.html">Kaluthara</option>
+                        <option value="file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Sales%20rep/Rep%20Home/rep3/rep3.html">Gampaha</option>
+                    </select>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="save">
+        <button id="saveButton" style="float:right" type="button">Save</button>
+    </div>
+
+    <section id="inventory">
+        <h2>Area Manager Stock</h2>
+        <table id="inventory-table">
+            <thead>
+                <tr>
+                    <th>Product ID</th>
+                    <th>Product Name</th>
+                    <th>Quantity</th>
+                </tr>
+            </thead>
+            <tbody id="inventoryBody">
+                <!-- Inventory items will be populated here -->
+            </tbody>
+        </table>
+    </section>
+
+    <section id="performance">
+        <h2>Requested Items</h2>
+        <table id="performance-table">
+            <thead>
+                <tr>
+                    <th>Shop ID</th>
+                    <th>Product ID</th>
+                    <th>Product Name</th>
+                    <th>Quantity</th>
+                </tr>
+            </thead>
+            <tbody id="performanceBody">
+                <!-- Requested items will be populated here -->
+            </tbody>
+        </table>
+    </section>
+
+    <div class="homebtn">
+        <button onclick="location.href='file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Home%20page/home.html#report'">Home</button>
+    </div>
+
+    <script type="module">
+        // Function to navigate to the selected district's page
+        function navigateToDistrict(selectElement) {
+            const url = selectElement.value;
+            if (url) {
+                window.location.href = url; // Navigate to the selected URL
+            }
+        }
+
+        // Import Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getFirestore, collection, getDocs, setDoc, doc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDeyt839rDGcoH3LwRWuc65_CUg6D6S5XE",
+            authDomain: "test-8cd9e.firebaseapp.com",
+            projectId: "test-8cd9e",
+            storageBucket: "test-8cd9e.appspot.com",
+            messagingSenderId: "745412020745",
+            appId: "1:745412020745:web:701eed8c9075a3572c86d8",
+            measurementId: "G-91P7MY8658"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Function to load data from the database
+        const loadTableData = async () => {
+            try {
+                console.log("Loading data...");
+                const dataTableBody = document.getElementById('dataTable').getElementsByTagName('tbody')[0];
+                const querySnapshot = await getDocs(collection(db, "area_manager02"));
+
+                dataTableBody.innerHTML = ""; // Clear the table body
+
+                querySnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+
+                    const row = document.createElement("tr");
+                    row.contentEditable = "true"; // Enable editing
+                    row.innerHTML = `
+                        <td>${docSnap.id}</td>
+                        <td>${data.managerName || "N/A"}</td>
+                        <td>${data.areaName || "N/A"}</td>
+                        <td>
+                            <select onchange="navigateToDistrict(this)">
+                                <option value="">Select District</option>
+                                <option value="file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Sales%20rep/Rep%20Home/rep1/rep1.html">Colombo</option>
+                                <option value="file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Sales%20rep/Rep%20Home/rep2/rep2.html">Kaluthara</option>
+                                <option value="file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Sales%20rep/Rep%20Home/rep3/rep3.html">Gampaha</option>
+                            </select>
+                        </td>
+                    `;
+                    dataTableBody.appendChild(row);
+                });
+
+                console.log("Data loaded successfully.");
+            } catch (error) {
+                console.error("Error loading data:", error);
+            }
+        };
+
+        // Function to add data to the database
+        const addDataToDatabase = async (managerID, managerName, areaName) => {
+            try {
+                const docRef = doc(db, "area_manager02", managerID);
+                await setDoc(docRef, { managerName, areaName });
+                console.log("Data added successfully.");
+                loadTableData(); // Refresh the table
+            } catch (error) {
+                console.error("Error adding data:", error);
+            }
+        };
+
+        // Function to load data into the Inventory table
+        const loadInventoryData = async () => {
+            try {
+                console.log("Loading inventory data...");
+                const inventoryBody = document.getElementById('inventoryBody');
+                inventoryBody.innerHTML = ""; // Clear existing rows
+
+                const querySnapshot = await getDocs(collection(db, "areamanager_enter_data"));
+                querySnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${data.product_id || "N/A"}</td>
+                        <td>${data.product_name || "N/A"}</td>
+                        <td>${data.quantity || "N/A"}</td>
+                    `;
+                    inventoryBody.appendChild(row);
+                });
+
+                console.log("Inventory data loaded successfully!");
+            } catch (error) {
+                console.error("Error loading inventory data:", error);
+            }
+        };
+
+        // Function to load data into the Requested Items table
+        const loadRequestedItemsData = async () => {
+            try {
+                console.log("Loading requested items...");
+                const performanceBody = document.getElementById('performanceBody');
+                performanceBody.innerHTML = ""; // Clear existing rows
+
+                const querySnapshot = await getDocs(collection(db, "requestedItems"));
+                querySnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${data.shop_id || "N/A"}</td>
+                        <td>${data.product_id || "N/A"}</td>
+                        <td>${data.product_name || "N/A"}</td>
+                        <td>${data.quantity || "N/A"}</td>
+                    `;
+                    performanceBody.appendChild(row);
+                });
+
+                console.log("Requested items data loaded successfully!");
+            } catch (error) {
+                console.error("Error loading requested items data:", error);
+            }
+        };
+
+        // Load data on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            loadTableData();
+            loadInventoryData();
+            loadRequestedItemsData();
+        });
+
+        // Save All Rows
+        const saveAllRows = async () => {
+            try {
+                const tableBody = document.getElementById('tableBody');
+                const rows = tableBody.querySelectorAll('tr');
+
+                for (const row of rows) {
+                    const cells = row.querySelectorAll('td');
+                    const managerID = cells[0].textContent.trim();
+                    const managerName = cells[1].textContent.trim();
+                    const areaName = cells[2].textContent.trim();
+
+                    if (!managerName || !areaName) {
+                        alert("Manager Name and Area Name are required for saving!");
+                        continue; // Skip rows without manager name or area name
+                    }
+
+                    // Save or Update in Firestore
+                    const docRef = doc(db, "area_manager02", managerID || managerName);
+                    await setDoc(docRef, {
+                        managerName,
+                        areaName
+                    });
+
+                    console.log(`Document ${managerID} saved/updated successfully!`);
+                }
+
+                alert("All changes saved successfully!");
+            } catch (error) {
+                console.error("Error saving rows:", error);
+            }
+        };
+
+        document.getElementById('saveButton').addEventListener('click', saveAllRows);
+    </script>
+</body>
+</html>
