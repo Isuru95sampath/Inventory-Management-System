@@ -42,61 +42,7 @@ h3 {
     text-shadow: 1px 1px 3px #000;
 }
 
-.container {
-    text-align: center;
-    margin-top: 20px;
-}
 
-.dropdown {
-    position: relative;
-    display: inline-block;
-    vertical-align: top;
-    padding-top: 25px;
-}
-
-.dropbtn {
-    background-color: #4CAF50;
-    color: white;
-    padding: 14px;
-    font-size: 14px;
-    border: none;
-    cursor: pointer;
-    border-radius: 12px;
-    transition: background-color 0.3s ease; /* Smooth hover transition */
-}
-
-.dropbtn:hover, .dropbtn:focus {
-    background-color: #2a703f; /* Slightly darker green for hover */
-}
-
-.dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: rgba(249, 249, 249, 0.8); /* Semi-transparent background */
-    min-width: 120px;
-    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
-    z-index: 1;
-    border-radius: 20px;
-    width: 150px;
-}
-
-.dropdown-content a {
-    color: #000;
-    padding: 12px 11px;
-    text-decoration: none;
-    display: block;
-    transition: background-color 0.3s ease; /* Smooth hover transition */
-}
-
-.dropdown-content a:hover {
-    background-color: #277fb9fd; /* Highlight on hover */
-    color: #fff; /* Text color change on hover */
-    border-radius: 20px;
-}
-
-.dropdown:hover .dropdown-content {
-    display: block;
-}
 
 section {
     padding: 10px;
@@ -114,7 +60,7 @@ table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 1em;
-    background-color: #91e3e6b9; /* Semi-transparent table background */
+    background-color: #95e1e4b4; /* Semi-transparent table background */
 }
 
 table, th, td {
@@ -145,6 +91,16 @@ button {
     cursor: pointer;
     margin: 5px;
     transition: background-color 0.3s ease; /* Smooth hover effect */
+}
+
+.save{
+    padding: 20px;
+}
+
+
+.next{
+    padding: 40px;
+    
 }
 
 button:hover {

@@ -20,22 +20,11 @@
             </tr>
         </thead>
         <tbody id="tableBody">
-            <tr contenteditable="true">
-                <td contenteditable="true"></td>
-                <td contenteditable="true"></td>
-                <td contenteditable="true"></td>
-                <td>
-                    <select onchange="navigateToDistrict(this)">
-                        <option value="">Select District</option>
-                        <option value="file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Sales%20rep/Rep%20Home/rep1/rep1.html">Colombo</option>
-                        <option value="file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Sales%20rep/Rep%20Home/rep2/rep2.html">Kaluthara</option>
-                        <option value="file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Sales%20rep/Rep%20Home/rep3/rep3.html">Gampaha</option>
-                    </select>
-                </td>
-            </tr>
+
         </tbody>
     </table>
 
+    <button id="addRow">Add Row</button>
     <div class="save">
         <button id="saveButton" style="float:right" type="button">Save</button>
     </div>
@@ -51,7 +40,7 @@
                 </tr>
             </thead>
             <tbody id="inventoryBody">
-                <!-- Inventory items will be populated here -->
+
             </tbody>
         </table>
     </section>
@@ -68,24 +57,20 @@
                 </tr>
             </thead>
             <tbody id="performanceBody">
-                <!-- Requested items will be populated here -->
+
             </tbody>
         </table>
+        <div class="next">
+           
+            <button id="nextButton" style="float:right" type="button">Next </button>
+        </div>
     </section>
 
     <div class="homebtn">
-        <button onclick="location.href='file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Home%20page/home.html#report'">Home</button>
+        <button onclick="location.href='file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Home%20page/home.html'">Home</button>
     </div>
 
     <script type="module">
-        // Function to navigate to the selected district's page
-        function navigateToDistrict(selectElement) {
-            const url = selectElement.value;
-            if (url) {
-                window.location.href = url; // Navigate to the selected URL
-            }
-        }
-
         // Import Firebase modules
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
         import { getFirestore, collection, getDocs, setDoc, doc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
@@ -105,58 +90,145 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Function to load data from the database
+        // Province and District Mapping
+        const provinceDistricts = {
+            "Western": ["Colombo", "Kaluthara", "Gampaha"],
+            "Central": ["Kandy", "Nuwara Eliya", "Matale"],
+            "Eastern": ["Ampara", "Batticaloa", "Trincomalee"],
+            "Northern": ["Jaffna", "Kilinochchi", "Mannar"],
+            "Southern": ["Galle", "Matara", "Hambantota"],
+            "North Western": ["Kurunegala", "Puttalam"],
+            "North Central": ["Anuradhapura", "Polonnaruwa"],
+            "Uva": ["Badulla", "Moneragala"],
+            "Sabaragamuwa": ["Ratnapura", "Kegalle"]
+        };
+
+        const districtLinks = {
+            "Colombo": "file:///C:/Users/pakaya/Downloads/Inventiry%20mannagment/Inventiry%20mannagment/Dash%20board/Sales%20rep/Rep%20Home/rep1/rep1.html",
+            "Kaluthara": "file:///C:/Users/pakaya/Downloads/Inventiry%20mannagment/Inventiry%20mannagment/Dash%20board/Sales%20rep/Rep%20Home/rep2/rep2.html",
+            "Gampaha": "file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Sales%20rep/Rep%20Home/rep3/rep3.html",
+            "Kandy": "path/to/kandy.html",
+            "Nuwara Eliya": "path/to/nuwaraeliya.html",
+            "Matale": "path/to/matale.html",
+            "Ampara": "path/to/ampara.html",
+            "Batticaloa": "path/to/batticaloa.html",
+            "Trincomalee": "path/to/trincomalee.html",
+            "Jaffna": "path/to/jaffna.html",
+            "Kilinochchi": "path/to/kilinochchi.html",
+            "Mannar": "path/to/mannar.html",
+            "Mullaitivu": "path/to/mullaitivu.html",
+            "Vavuniya": "path/to/vavuniya.html",
+            "Galle": "path/to/galle.html",
+            "Matara": "path/to/matara.html",
+            "Hambantota": "path/to/hambantota.html",
+            "Kurunegala": "path/to/kurunegala.html",
+            "Puttalam": "path/to/puttalam.html",
+            "Anuradhapura": "path/to/anuradhapura.html",
+            "Polonnaruwa": "path/to/polonnaruwa.html",
+            "Badulla": "path/to/badulla.html",
+            "Moneragala": "path/to/moneragala.html",
+            "Ratnapura": "path/to/ratnapura.html",
+            "Kegalle": "path/to/kegalle.html"
+        };
+
+        // Function to load data from Firestore and populate the table
         const loadTableData = async () => {
             try {
-                console.log("Loading data...");
-                const dataTableBody = document.getElementById('dataTable').getElementsByTagName('tbody')[0];
+                const tableBody = document.getElementById('tableBody');
+                tableBody.innerHTML = ""; // Clear existing rows
+
                 const querySnapshot = await getDocs(collection(db, "area_manager02"));
-
-                dataTableBody.innerHTML = ""; // Clear the table body
-
                 querySnapshot.forEach((docSnap) => {
                     const data = docSnap.data();
+                    const row = document.createElement('tr');
 
-                    const row = document.createElement("tr");
-                    row.contentEditable = "true"; // Enable editing
+                    // Generate district buttons dynamically
+                    const districts = provinceDistricts[data.areaName] || [];
+                    const districtButtons = districts.map(district => `
+                        <button class="district-btn" data-district="${district}">${district}</button>
+                    `).join("");
+
                     row.innerHTML = `
-                        <td>${docSnap.id}</td>
-                        <td>${data.managerName || "N/A"}</td>
-                        <td>${data.areaName || "N/A"}</td>
-                        <td>
-                            <select onchange="navigateToDistrict(this)">
-                                <option value="">Select District</option>
-                                <option value="file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Sales%20rep/Rep%20Home/rep1/rep1.html">Colombo</option>
-                                <option value="file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Sales%20rep/Rep%20Home/rep2/rep2.html">Kaluthara</option>
-                                <option value="file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Sales%20rep/Rep%20Home/rep3/rep3.html">Gampaha</option>
-                            </select>
-                        </td>
+                        <td contenteditable="true">${docSnap.id}</td>
+                        <td contenteditable="true">${data.managerName || ""}</td>
+                        <td contenteditable="true">${data.areaName || ""}</td>
+                        <td>${districtButtons}</td>
                     `;
-                    dataTableBody.appendChild(row);
+                    tableBody.appendChild(row);
                 });
 
-                console.log("Data loaded successfully.");
+                // Bind click events to district buttons
+                document.querySelectorAll('.district-btn').forEach(buttonn => {
+                    buttonn.addEventListener('click', (event) => {
+                        const district = event.target.dataset.district;
+                        navigateToDistrict(district);
+                    });
+                });
             } catch (error) {
                 console.error("Error loading data:", error);
             }
         };
 
-        // Function to add data to the database
-        const addDataToDatabase = async (managerID, managerName, areaName) => {
-            try {
-                const docRef = doc(db, "area_manager02", managerID);
-                await setDoc(docRef, { managerName, areaName });
-                console.log("Data added successfully.");
-                loadTableData(); // Refresh the table
-            } catch (error) {
-                console.error("Error adding data:", error);
+        // Navigate to selected district's page
+        const navigateToDistrict = (district) => {
+            const url = districtLinks[district];
+            if (url) {
+                window.location.href = url;
+            } else {
+                alert("Invalid district selected!");
             }
         };
 
-        // Function to load data into the Inventory table
+        // Add new row
+        const addRow = () => {
+            const tableBody = document.getElementById('tableBody');
+            const newRow = document.createElement('tr');
+
+            const districtButtons = Object.keys(provinceDistricts).map(province => {
+                return provinceDistricts[province].map(district => `
+                    <button class="district-btn" data-district="${district}">${district}</button>
+                `).join("");
+            }).join("");
+
+            newRow.innerHTML = `
+                <td contenteditable="true"></td>
+                <td contenteditable="true"></td>
+                <td contenteditable="true"></td>
+                <td>${districtButtons}</td>
+            `;
+            tableBody.appendChild(newRow);
+
+            newRow.querySelectorAll('.district-btn').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const district = event.target.dataset.district;
+                    navigateToDistrict(district);
+                });
+            });
+        };
+
+        // Save all rows
+        const saveAllRows = async () => {
+            const tableBody = document.getElementById('tableBody');
+            const rows = tableBody.querySelectorAll('tr');
+
+            for (const row of rows) {
+                const cells = row.querySelectorAll('td');
+                const managerID = cells[0].textContent.trim();
+                const managerName = cells[1].textContent.trim();
+                const areaName = cells[2].textContent.trim();
+
+                if (managerID && managerName && areaName) {
+                    const docRef = doc(db, "area_manager02", managerID);
+                    await setDoc(docRef, { managerName, areaName });
+                }
+            }
+
+            alert("Data saved successfully!");
+        };
+
+        // Load inventory data from Firestore
         const loadInventoryData = async () => {
             try {
-                console.log("Loading inventory data...");
                 const inventoryBody = document.getElementById('inventoryBody');
                 inventoryBody.innerHTML = ""; // Clear existing rows
 
@@ -164,87 +236,28 @@
                 querySnapshot.forEach((docSnap) => {
                     const data = docSnap.data();
                     const row = document.createElement('tr');
+
                     row.innerHTML = `
-                        <td>${data.product_id || "N/A"}</td>
-                        <td>${data.product_name || "N/A"}</td>
-                        <td>${data.quantity || "N/A"}</td>
+                        <td>${data.product_id || ""}</td>
+                        <td>${data.product_name || ""}</td>
+                        <td>${data.quantity || ""}</td>
                     `;
+
                     inventoryBody.appendChild(row);
                 });
-
-                console.log("Inventory data loaded successfully!");
             } catch (error) {
                 console.error("Error loading inventory data:", error);
             }
         };
 
-        // Function to load data into the Requested Items table
-        const loadRequestedItemsData = async () => {
-            try {
-                console.log("Loading requested items...");
-                const performanceBody = document.getElementById('performanceBody');
-                performanceBody.innerHTML = ""; // Clear existing rows
-
-                const querySnapshot = await getDocs(collection(db, "requestedItems"));
-                querySnapshot.forEach((docSnap) => {
-                    const data = docSnap.data();
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${data.shop_id || "N/A"}</td>
-                        <td>${data.product_id || "N/A"}</td>
-                        <td>${data.product_name || "N/A"}</td>
-                        <td>${data.quantity || "N/A"}</td>
-                    `;
-                    performanceBody.appendChild(row);
-                });
-
-                console.log("Requested items data loaded successfully!");
-            } catch (error) {
-                console.error("Error loading requested items data:", error);
-            }
-        };
+        document.getElementById('addRow').addEventListener('click', addRow);
+        document.getElementById('saveButton').addEventListener('click', saveAllRows);
 
         // Load data on page load
         window.addEventListener('DOMContentLoaded', () => {
             loadTableData();
             loadInventoryData();
-            loadRequestedItemsData();
         });
-
-        // Save All Rows
-        const saveAllRows = async () => {
-            try {
-                const tableBody = document.getElementById('tableBody');
-                const rows = tableBody.querySelectorAll('tr');
-
-                for (const row of rows) {
-                    const cells = row.querySelectorAll('td');
-                    const managerID = cells[0].textContent.trim();
-                    const managerName = cells[1].textContent.trim();
-                    const areaName = cells[2].textContent.trim();
-
-                    if (!managerName || !areaName) {
-                        alert("Manager Name and Area Name are required for saving!");
-                        continue; // Skip rows without manager name or area name
-                    }
-
-                    // Save or Update in Firestore
-                    const docRef = doc(db, "area_manager02", managerID || managerName);
-                    await setDoc(docRef, {
-                        managerName,
-                        areaName
-                    });
-
-                    console.log(`Document ${managerID} saved/updated successfully!`);
-                }
-
-                alert("All changes saved successfully!");
-            } catch (error) {
-                console.error("Error saving rows:", error);
-            }
-        };
-
-        document.getElementById('saveButton').addEventListener('click', saveAllRows);
     </script>
 </body>
 </html>
