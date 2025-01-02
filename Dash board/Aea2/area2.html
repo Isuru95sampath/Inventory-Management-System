@@ -7,8 +7,6 @@
 </head>
 <body>
     <h1><u>Area Manager</u></h1>
-    
-    <iframe id="contentFrame" src="" style="width:100%; height:40px; border:none;"></iframe>
 
     <table id="dataTable">
         <thead>
@@ -16,12 +14,10 @@
                 <th>ID</th>
                 <th>Name</th>
                 <th>Area Name</th>
-                <th>Select District of Area Manager</th>
+                <th>Select Districts</th>
             </tr>
         </thead>
-        <tbody id="tableBody">
-
-        </tbody>
+        <tbody id="tableBody"></tbody>
     </table>
 
     <button id="addRow">Add Row</button>
@@ -39,9 +35,7 @@
                     <th>Quantity</th>
                 </tr>
             </thead>
-            <tbody id="inventoryBody">
-
-            </tbody>
+            <tbody id="inventoryBody"></tbody>
         </table>
     </section>
 
@@ -56,14 +50,22 @@
                     <th>Quantity</th>
                 </tr>
             </thead>
-            <tbody id="performanceBody">
-
-            </tbody>
+            <tbody id="performanceBody"></tbody>
         </table>
-        <div class="next">
-           
-            <button id="nextButton" style="float:right" type="button">Next </button>
+        <div class="rep-container">
+            <button onclick="location.href='#'"> 01</button>
+            <button onclick="location.href='#'"> 02</button>
+            <button onclick="location.href='#'"> 03</button>
+            <button onclick="location.href='#'"> 04</button>
+            <button onclick="location.href='#'"> 05</button>
+            <button onclick="location.href='#'"> 06</button>
+            <button onclick="location.href='#'"> 07</button>
+            <button onclick="location.href='#'"> 08</button>
+            <button onclick="location.href='#'"> 09</button>
         </div>
+        
+</div>
+
     </section>
 
     <div class="homebtn">
@@ -71,11 +73,9 @@
     </div>
 
     <script type="module">
-        // Import Firebase modules
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
         import { getFirestore, collection, getDocs, setDoc, doc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
 
-        // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyDeyt839rDGcoH3LwRWuc65_CUg6D6S5XE",
             authDomain: "test-8cd9e.firebaseapp.com",
@@ -86,11 +86,9 @@
             measurementId: "G-91P7MY8658"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Province and District Mapping
         const provinceDistricts = {
             "Western": ["Colombo", "Kaluthara", "Gampaha"],
             "Central": ["Kandy", "Nuwara Eliya", "Matale"],
@@ -104,72 +102,54 @@
         };
 
         const districtLinks = {
-            "Colombo": "file:///C:/Users/pakaya/Downloads/Inventiry%20mannagment/Inventiry%20mannagment/Dash%20board/Sales%20rep/Rep%20Home/rep1/rep1.html",
-            "Kaluthara": "file:///C:/Users/pakaya/Downloads/Inventiry%20mannagment/Inventiry%20mannagment/Dash%20board/Sales%20rep/Rep%20Home/rep2/rep2.html",
-            "Gampaha": "file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Sales%20rep/Rep%20Home/rep3/rep3.html",
-            "Kandy": "path/to/kandy.html",
-            "Nuwara Eliya": "path/to/nuwaraeliya.html",
-            "Matale": "path/to/matale.html",
-            "Ampara": "path/to/ampara.html",
-            "Batticaloa": "path/to/batticaloa.html",
-            "Trincomalee": "path/to/trincomalee.html",
-            "Jaffna": "path/to/jaffna.html",
-            "Kilinochchi": "path/to/kilinochchi.html",
-            "Mannar": "path/to/mannar.html",
-            "Mullaitivu": "path/to/mullaitivu.html",
-            "Vavuniya": "path/to/vavuniya.html",
-            "Galle": "path/to/galle.html",
-            "Matara": "path/to/matara.html",
-            "Hambantota": "path/to/hambantota.html",
-            "Kurunegala": "path/to/kurunegala.html",
-            "Puttalam": "path/to/puttalam.html",
-            "Anuradhapura": "path/to/anuradhapura.html",
-            "Polonnaruwa": "path/to/polonnaruwa.html",
-            "Badulla": "path/to/badulla.html",
-            "Moneragala": "path/to/moneragala.html",
-            "Ratnapura": "path/to/ratnapura.html",
-            "Kegalle": "path/to/kegalle.html"
-        };
+    "Colombo": "file:///C:/Users/pakaya/Downloads/Inventiry%20mannagment/Inventiry%20mannagment/Dash%20board/Sales%20rep/Rep%20Home/rep1/rep1.html",
+    "Kaluthara": "file:///C:/Users/pakaya/Downloads/Inventiry%20mannagment/Inventiry%20mannagment/Dash%20board/Sales%20rep/Rep%20Home/rep2/rep2.html",
+    "Gampaha": "file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Sales%20rep/Rep%20Home/rep3/rep3.html",
+    "Kandy": "file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Sales%20rep/Rep%20Home/rep3/rep3.html"
+};
 
-        // Function to load data from Firestore and populate the table
-        const loadTableData = async () => {
-            try {
-                const tableBody = document.getElementById('tableBody');
-                tableBody.innerHTML = ""; // Clear existing rows
+const loadTableData = async () => {
+    try {
+        const tableBody = document.getElementById('tableBody');
+        tableBody.innerHTML = "";
 
-                const querySnapshot = await getDocs(collection(db, "area_manager02"));
-                querySnapshot.forEach((docSnap) => {
-                    const data = docSnap.data();
-                    const row = document.createElement('tr');
+        const querySnapshot = await getDocs(collection(db, "area_manager02"));
+        querySnapshot.forEach((docSnap) => {
+            const data = docSnap.data();
+            const row = document.createElement('tr');
+            const districts = provinceDistricts[data.areaName] || [];
+            const districtOptions = districts.map(district => 
+                `<option value="${district}">${district}</option>`).join("");
 
-                    // Generate district buttons dynamically
-                    const districts = provinceDistricts[data.areaName] || [];
-                    const districtButtons = districts.map(district => `
-                        <button class="district-btn" data-district="${district}">${district}</button>
-                    `).join("");
+            row.innerHTML = `
+                <td contenteditable="true">${docSnap.id}</td>
+                <td contenteditable="true">${data.managerName || ""}</td>
+                <td contenteditable="true">${data.areaName || ""}</td>
+                <td>
+                    <select class="district-select">
+                        <option value="" disabled selected>Select District</option>
+                        ${districtOptions}
+                    </select>
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
 
-                    row.innerHTML = `
-                        <td contenteditable="true">${docSnap.id}</td>
-                        <td contenteditable="true">${data.managerName || ""}</td>
-                        <td contenteditable="true">${data.areaName || ""}</td>
-                        <td>${districtButtons}</td>
-                    `;
-                    tableBody.appendChild(row);
-                });
+        document.querySelectorAll('.district-select').forEach(select => {
+            select.addEventListener('change', (event) => {
+                const selectedDistrict = event.target.value;
+                if (districtLinks[selectedDistrict]) {
+                    window.location.href = districtLinks[selectedDistrict];
+                } else {
+                    alert("No link available for the selected district.");
+                }
+            });
+        });
+    } catch (error) {
+        console.error("Error loading data:", error);
+    }
+};
 
-                // Bind click events to district buttons
-                document.querySelectorAll('.district-btn').forEach(buttonn => {
-                    buttonn.addEventListener('click', (event) => {
-                        const district = event.target.dataset.district;
-                        navigateToDistrict(district);
-                    });
-                });
-            } catch (error) {
-                console.error("Error loading data:", error);
-            }
-        };
-
-        // Navigate to selected district's page
         const navigateToDistrict = (district) => {
             const url = districtLinks[district];
             if (url) {
@@ -179,11 +159,9 @@
             }
         };
 
-        // Add new row
         const addRow = () => {
             const tableBody = document.getElementById('tableBody');
             const newRow = document.createElement('tr');
-
             const districtButtons = Object.keys(provinceDistricts).map(province => {
                 return provinceDistricts[province].map(district => `
                     <button class="district-btn" data-district="${district}">${district}</button>
@@ -206,7 +184,6 @@
             });
         };
 
-        // Save all rows
         const saveAllRows = async () => {
             const tableBody = document.getElementById('tableBody');
             const rows = tableBody.querySelectorAll('tr');
@@ -226,37 +203,48 @@
             alert("Data saved successfully!");
         };
 
-        // Load inventory data from Firestore
         const loadInventoryData = async () => {
-            try {
-                const inventoryBody = document.getElementById('inventoryBody');
-                inventoryBody.innerHTML = ""; // Clear existing rows
+            const inventoryBody = document.getElementById('inventoryBody');
+            inventoryBody.innerHTML = "";
 
-                const querySnapshot = await getDocs(collection(db, "areamanager_enter_data"));
-                querySnapshot.forEach((docSnap) => {
-                    const data = docSnap.data();
-                    const row = document.createElement('tr');
+            const querySnapshot = await getDocs(collection(db, "areamanager_enter_data"));
+            querySnapshot.forEach((docSnap) => {
+                const data = docSnap.data();
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${data.product_id || ""}</td>
+                    <td>${data.product_name || ""}</td>
+                    <td>${data.quantity || ""}</td>
+                `;
+                inventoryBody.appendChild(row);
+            });
+        };
 
-                    row.innerHTML = `
-                        <td>${data.product_id || ""}</td>
-                        <td>${data.product_name || ""}</td>
-                        <td>${data.quantity || ""}</td>
-                    `;
+        const InventoryRecData = async () => {
+            const performanceBody = document.getElementById('performanceBody');
+            performanceBody.innerHTML = "";
 
-                    inventoryBody.appendChild(row);
-                });
-            } catch (error) {
-                console.error("Error loading inventory data:", error);
-            }
+            const querySnapshot = await getDocs(collection(db, "areamanger_request_product"));
+            querySnapshot.forEach((docSnap) => {
+                const data = docSnap.data();
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${data.shop_id || ""}</td>
+                    <td>${data.product_id || ""}</td>
+                    <td>${data.product_name || ""}</td>
+                    <td>${data.quantity || ""}</td>
+                `;
+                performanceBody.appendChild(row);
+            });
         };
 
         document.getElementById('addRow').addEventListener('click', addRow);
         document.getElementById('saveButton').addEventListener('click', saveAllRows);
 
-        // Load data on page load
         window.addEventListener('DOMContentLoaded', () => {
             loadTableData();
             loadInventoryData();
+            InventoryRecData();
         });
     </script>
 </body>

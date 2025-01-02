@@ -5,7 +5,7 @@ body {
     background-repeat: no-repeat; 
     background-position: center; 
     background-attachment: fixed; 
-    margin: 0; 
+    margin: 30px; 
     padding: 0;
     color: #020202; 
 }
@@ -15,7 +15,7 @@ h1 {
     font-size: 35px;
     color: #fff;
     background-color: rgba(28, 49, 41, 0.88); 
-    width: 100%;
+    width: 95%;
     padding: 20px;
     margin: 0;
     border-bottom: 2px solid #fff;
@@ -49,7 +49,12 @@ section {
     margin: 10px 0;
     background-color: rgba(17, 138, 175, 0.5); /* Semi-transparent section background */
     border-radius: 10px;
+    align-items: center;
+
     color: #000000; /* Ensure content is readable */
+}
+section , .inventory{
+    padding-top: -30px;
 }
 a{
     text-decoration: none;
@@ -57,10 +62,11 @@ a{
 
 
 table {
-    width: 100%;
+    width: 98%;
     border-collapse: collapse;
-    margin-bottom: 1em;
-    background-color: #95e1e4b4; /* Semi-transparent table background */
+    margin-bottom: 2em;
+    background-color: #95e1e4b4; 
+    align-items: center;
 }
 
 table, th, td {
@@ -102,10 +108,123 @@ button {
     padding: 40px;
     
 }
-
-button:hover {
-    background-color: #057aa8; /* Highlight on hover */
+.dropdownbtun{
+    text-align: right;
+    display: inline-block;
+    vertical-align: top;
+    padding-top: 25px;
 }
+
+.Dropdown button{
+    background-color: #3e6cc200;
+    color: #000000;
+    
+
+}
+.Dropdown{
+    color: #28a76c;
+}
+
+
+.Dropdown button:hover{
+    background-color: #10c78a; 
+
+}
+button:hover {
+    background-color: #057aa8; 
+}
+
+/* Styling the dropdown container */
+.district-select {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    align-items: center;
+    padding: 5px;
+    border: 1.5px solid #6b1e1e;
+    border-radius: 8px;
+    width: 35%;
+    max-width: 150px;
+    background-color: #133f3200;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+}
+
+/* Hover and focus styles for dropdown */
+.district-select:hover,
+.district-select:focus {
+    border-color: #007BFF;
+    background-color: #b9f7ee;
+    outline: none;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+}
+
+/* Option styles */
+.district-select option {
+    padding: 8px;
+    background: #b9d8b8be;
+    color: #000000;
+    border-radius: 10px;
+    
+}
+
+/* Disabled option styling */
+.district-select option:disabled {
+    color: #fff9f9;
+    background: #000000;
+    
+}
+
+/* Dropdown in a table cell alignment */
+table td select.district-select {
+    margin: 0;
+    display: block;
+    width: 100%;
+    border-radius: 10px;
+
+    
+}
+
+
+/* Container for buttons */
+.rep-container {
+    display: flex;
+    flex-wrap: wrap; /* Allows buttons to wrap to the next line if needed */
+    gap: 10px; /* Adds space between buttons */
+    justify-content: center; /* Centers the buttons horizontally */
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+/* Button styles */
+.rep-container button {
+    background-color: #055307;
+    color: white;
+    border: none;
+    padding: 10px 10px;
+    font-size: 14px;
+    cursor: pointer;
+    text-align: center;
+    border-radius: 10px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    width: auto; 
+    height: auto; 
+    box-shadow: 0 6px 6px rgba(0, 0, 0, 0.16);
+}
+
+/* Hover effect */
+.rep-container button:hover {
+    background-color: #45a07a;
+    transform: translateY(-3px);
+}
+
+/* Active button effect */
+.rep-container button:active {
+    background-color: #87d8b9;
+    transform: translateY(1px);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
 
 input[type="submit"] {
     padding: 0.5em 1em;
