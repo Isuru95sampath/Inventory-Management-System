@@ -71,7 +71,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-        import { getFirestore, collection, getDocs, setDoc, doc, addDoc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, setDoc, doc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDeyt839rDGcoH3LwRWuc65_CUg6D6S5XE",
@@ -113,11 +113,11 @@
                 const querySnapshot = await getDocs(collection(db, "area_manager02"));
                 querySnapshot.forEach((docSnap) => {
                     const data = docSnap.data();
-                    const row = document.createElement('tr');
                     const districts = provinceDistricts[data.areaName] || [];
                     const districtOptions = districts.map(district => 
                         `<option value="${district}">${district}</option>`).join("");
 
+                    const row = document.createElement('tr');
                     row.innerHTML = `
                         <td contenteditable="true">${docSnap.id}</td>
                         <td contenteditable="true">${data.managerName || ""}</td>
@@ -144,12 +144,12 @@
                 });
             } catch (error) {
                 console.error("Error loading data:", error);
+                alert("Failed to load table data. Check the console for details.");
             }
         };
 
         const loadOtherTableData = async () => {
             try {
-                // Load data into the "Area Manager Stock" table
                 const inventoryBody = document.getElementById('inventoryBody');
                 inventoryBody.innerHTML = "";
 
@@ -165,7 +165,6 @@
                     inventoryBody.appendChild(row);
                 });
 
-                // Load data into the "Requested Items" table
                 const performanceBody = document.getElementById('performanceBody');
                 performanceBody.innerHTML = "";
 
@@ -183,12 +182,12 @@
                 });
             } catch (error) {
                 console.error("Error loading other tables data:", error);
+                alert("Failed to load other tables data. Check the console for details.");
             }
         };
 
         const loadInventoryDataArea1 = async () => {
             try {
-                // Load data into the "Area Manager Stock" table from Area1 collection
                 const inventoryBody = document.getElementById('inventoryBody');
                 inventoryBody.innerHTML = "";
 
@@ -204,11 +203,10 @@
                     inventoryBody.appendChild(row);
                 });
 
-                // Load data into the "Requested Items" table from Area1request_products collection
                 const performanceBody = document.getElementById('performanceBody');
                 performanceBody.innerHTML = "";
 
-                const area1RequestSnapshot = await getDocs(collection(db, "Area1request_products"));
+                const area1RequestSnapshot = await getDocs(collection(db, "Area1 request_products")); // Updated collection name
                 area1RequestSnapshot.forEach((docSnap) => {
                     const data = docSnap.data();
                     const row = document.createElement('tr');
@@ -222,10 +220,11 @@
                 });
             } catch (error) {
                 console.error("Error loading Area1 data:", error);
+                alert("Failed to load Area1 data. Check the console for details.");
             }
         };
 
-        const addRow = () => {
+       /* const addRow = () => {
             const tableBody = document.getElementById('tableBody');
             const row = document.createElement('tr');
             row.innerHTML = `
@@ -241,26 +240,31 @@
                 </td>
             `;
             tableBody.appendChild(row);
-        };
+        };*/
 
         const saveTableData = async () => {
-            const tableBody = document.getElementById('tableBody');
-            const rows = tableBody.querySelectorAll('tr');
-            rows.forEach(async (row) => {
-                const id = row.cells[0].innerText;
-                const managerName = row.cells[1].innerText;
-                const areaName = row.cells[2].innerText;
-                const district = row.cells[3].querySelector('select').value;
+            try {
+                const tableBody = document.getElementById('tableBody');
+                const rows = tableBody.querySelectorAll('tr');
+                rows.forEach(async (row) => {
+                    const id = row.cells[0].innerText;
+                    const managerName = row.cells[1].innerText;
+                    const areaName = row.cells[2].innerText;
+                    const district = row.cells[3].querySelector('select').value;
 
-                if (id && managerName && areaName && district) {
-                    await setDoc(doc(db, "area_manager02", id), {
-                        managerName,
-                        areaName,
-                        district
-                    });
-                }
-            });
-            alert("Data saved successfully!");
+                    if (id && managerName && areaName && district) {
+                        await setDoc(doc(db, "area_manager02", id), {
+                            managerName,
+                            areaName,
+                            district
+                        });
+                    }
+                });
+                alert("Data saved successfully!");
+            } catch (error) {
+                console.error("Error saving data:", error);
+                alert("Failed to save data. Check the console for details.");
+            }
         };
 
         document.getElementById('addRow').addEventListener('click', addRow);
