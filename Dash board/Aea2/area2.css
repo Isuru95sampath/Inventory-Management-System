@@ -12,17 +12,27 @@ body {
 
 h1 {
     text-align: center;
-    font-size: 35px;
-    color: #fff;
-    background-color: rgba(28, 49, 41, 0.88); 
+    font-size: 45px;
+    color: #ffffff;
+    background-size: 400% 400%;
     width: 95%;
     padding: 20px;
     margin: 0;
     border-bottom: 2px solid #fff;
+    border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
 h1:first-letter {
-    font-size: 50px;
+    font-size: 60px;
+    color: #ffcc00;
+    text-shadow: 2px 2px 4px #000;
 }
 
 h2 {
@@ -30,7 +40,11 @@ h2 {
     margin-top: 50px; 
     font-size: 38px;
     color: #ffffff;
-    text-shadow: 1px 1px 4px #000; 
+    text-shadow: 2px 2px 4px #000; 
+    background: rgba(0, 0, 0, 0.6);
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 h3 {
@@ -42,31 +56,39 @@ h3 {
     text-shadow: 1px 1px 3px #000;
 }
 
-
-
 section {
-    padding: 10px;
-    margin: 10px 0;
-    background-color: rgba(17, 138, 175, 0.5); /* Semi-transparent section background */
-    border-radius: 10px;
-    align-items: center;
-
-    color: #000000; /* Ensure content is readable */
+    padding: 20px;
+    margin: 20px 0;
+    background: rgba(17, 138, 175, 0);
+    border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    color: #000000;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-section , .inventory{
+
+section:hover {
+    transform: scale(1.02);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5);
+}
+
+section, .inventory {
     padding-top: -30px;
 }
-a{
+
+a {
     text-decoration: none;
 }
 
-
+/* Apply border-radius to all tables */
 table {
     width: 98%;
     border-collapse: collapse;
     margin-bottom: 2em;
-    background-color: #95e1e4b4; 
+    background-color: rgba(149, 225, 228, 0.7); 
     align-items: center;
+    border-radius: 18px; 
+    overflow: hidden; 
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
 }
 
 table, th, td {
@@ -77,8 +99,12 @@ th, td {
     padding: 0.5em;
     text-align: left;
 }
-th{
-    background-color: #28a76c;
+
+th {
+    background: linear-gradient(90deg, #28a76c, #1e7a5e);
+    color: #fff;
+    font-size: 20px;
+    text-shadow: 1px 1px 2px #000;
 }
 
 td {
@@ -86,52 +112,54 @@ td {
     vertical-align: middle; 
     font-weight: bold; 
     font-size: 20px;
+    border: 2px solid #000;
+    background: rgba(255, 255, 255, 0.8);
 }
 
 button {
     padding: 0.5em 1em;
-    background-color: #136594f6;
+    background: linear-gradient(90deg, #136594, #057aa8);
     color: #fff;
     border-radius: 8px;
     border: 2px solid black;
     cursor: pointer;
     margin: 5px;
-    transition: background-color 0.3s ease; /* Smooth hover effect */
+    transition: background 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
-.save{
+button:hover {
+    background: linear-gradient(90deg, #057aa8, #136594);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+.save {
     padding: 20px;
 }
 
-
-.next{
+.next {
     padding: 40px;
-    
 }
-.dropdownbtun{
+
+.dropdownbtun {
     text-align: right;
     display: inline-block;
     vertical-align: top;
     padding-top: 25px;
 }
 
-.Dropdown button{
-    background-color: #3e6cc200;
+.Dropdown button {
+    background-color: rgba(62, 108, 194, 0);
     color: #000000;
-    
-
 }
-.Dropdown{
+
+.Dropdown {
     color: #28a76c;
 }
 
-
-.Dropdown button:hover{
+.Dropdown button:hover {
     background-color: #10c78a; 
-
-}
-button:hover {
-    background-color: #057aa8; 
 }
 
 /* Styling the dropdown container */
@@ -144,12 +172,11 @@ button:hover {
     border-radius: 8px;
     width: 35%;
     max-width: 150px;
-    background-color: #133f3200;
+    background-color: rgba(19, 63, 50, 0);
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
     transition: all 0.3s ease;
 }
 
-/* Hover and focus styles for dropdown */
 .district-select:hover,
 .district-select:focus {
     border-color: #007BFF;
@@ -159,86 +186,72 @@ button:hover {
     box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
 }
 
-/* Option styles */
 .district-select option {
     padding: 8px;
-    background: #b9d8b8be;
+    background: rgba(185, 216, 184, 0.75);
     color: #000000;
     border-radius: 10px;
-    
 }
 
-/* Disabled option styling */
 .district-select option:disabled {
     color: #fff9f9;
     background: #000000;
-    
 }
 
-/* Dropdown in a table cell alignment */
 table td select.district-select {
     margin: 0;
     display: block;
     width: 100%;
     border-radius: 10px;
-
-    
 }
-
 
 /* Container for buttons */
 .rep-container {
     display: flex;
-    flex-wrap: wrap; /* Allows buttons to wrap to the next line if needed */
-    gap: 10px; /* Adds space between buttons */
-    justify-content: center; /* Centers the buttons horizontally */
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
     padding: 20px;
     font-family: Arial, sans-serif;
 }
 
-/* Button styles */
 .rep-container button {
-    background-color: #055307;
+    background: linear-gradient(90deg, #055307, #45a07a);
     color: white;
     border: none;
-    padding: 10px 10px;
+    padding: 10px 20px;
     font-size: 14px;
     cursor: pointer;
     text-align: center;
     border-radius: 10px;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    width: auto; 
-    height: auto; 
+    transition: background 0.3s ease, transform 0.3s ease;
     box-shadow: 0 6px 6px rgba(0, 0, 0, 0.16);
 }
 
-/* Hover effect */
 .rep-container button:hover {
-    background-color: #45a07a;
     transform: translateY(-3px);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.3);
 }
 
-/* Active button effect */
 .rep-container button:active {
-    background-color: #87d8b9;
+    background: linear-gradient(90deg, #87d8b9, #45a07a);
     transform: translateY(1px);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
-
 
 input[type="submit"] {
     padding: 0.5em 1em;
-    background-color: #28a76c;
+    background: linear-gradient(90deg, #28a76c, #218877);
     color: #fff;
     border: none;
     cursor: pointer;
     border-radius: 5px;
-    transition: background-color 0.3s ease; /* Smooth hover effect */
+    transition: background 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 input[type="submit"]:hover {
-    background-color: #218877;
-}
+    }
 
 @media (max-width: 768px) {
     h1 {

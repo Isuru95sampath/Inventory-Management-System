@@ -53,8 +53,8 @@
             <tbody id="performanceBody"></tbody>
         </table>
         <div class="rep-container">
-            <button onclick="location.href='#'"> 01</button>
-            <button onclick="location.href='#'"> 02</button>
+            <button id="loadOtherTables"> 01</button>
+            <button id="loadInventoryDataArea1"> 02</button>
             <button onclick="location.href='#'"> 03</button>
             <button onclick="location.href='#'"> 04</button>
             <button onclick="location.href='#'"> 05</button>
@@ -63,9 +63,6 @@
             <button onclick="location.href='#'"> 08</button>
             <button onclick="location.href='#'"> 09</button>
         </div>
-        
-</div>
-
     </section>
 
     <div class="homebtn">
@@ -74,7 +71,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-        import { getFirestore, collection, getDocs, setDoc, doc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, setDoc, doc, addDoc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDeyt839rDGcoH3LwRWuc65_CUg6D6S5XE",
@@ -102,149 +99,177 @@
         };
 
         const districtLinks = {
-    "Colombo": "file:///C:/Users/pakaya/Downloads/Inventiry%20mannagment/Inventiry%20mannagment/Dash%20board/Sales%20rep/Rep%20Home/rep1/rep1.html",
-    "Kaluthara": "file:///C:/Users/pakaya/Downloads/Inventiry%20mannagment/Inventiry%20mannagment/Dash%20board/Sales%20rep/Rep%20Home/rep2/rep2.html",
-    "Gampaha": "file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Sales%20rep/Rep%20Home/rep3/rep3.html",
-    "Kandy": "file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Sales%20rep/Rep%20Home/rep3/rep3.html"
-};
+            "Colombo": "file:///C:/Users/pakaya/Downloads/Inventiry%20mannagment/Inventiry%20mannagment/Dash%20board/Sales%20rep/Rep%20Home/rep1/rep1.html",
+            "Kaluthara": "file:///C:/Users/pakaya/Downloads/Inventiry%20mannagment/Inventiry%20mannagment/Dash%20board/Sales%20rep/Rep%20Home/rep2/rep2.html",
+            "Gampaha": "file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Sales%20rep/Rep%20Home/rep3/rep3.html",
+            "Kandy": "file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Sales%20rep/Rep%20Home/rep3/rep3.html"
+        };
 
-const loadTableData = async () => {
-    try {
-        const tableBody = document.getElementById('tableBody');
-        tableBody.innerHTML = "";
+        const loadTableData = async () => {
+            try {
+                const tableBody = document.getElementById('tableBody');
+                tableBody.innerHTML = "";
 
-        const querySnapshot = await getDocs(collection(db, "area_manager02"));
-        querySnapshot.forEach((docSnap) => {
-            const data = docSnap.data();
-            const row = document.createElement('tr');
-            const districts = provinceDistricts[data.areaName] || [];
-            const districtOptions = districts.map(district => 
-                `<option value="${district}">${district}</option>`).join("");
+                const querySnapshot = await getDocs(collection(db, "area_manager02"));
+                querySnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    const row = document.createElement('tr');
+                    const districts = provinceDistricts[data.areaName] || [];
+                    const districtOptions = districts.map(district => 
+                        `<option value="${district}">${district}</option>`).join("");
 
-            row.innerHTML = `
-                <td contenteditable="true">${docSnap.id}</td>
-                <td contenteditable="true">${data.managerName || ""}</td>
-                <td contenteditable="true">${data.areaName || ""}</td>
-                <td>
-                    <select class="district-select">
-                        <option value="" disabled selected>Select District</option>
-                        ${districtOptions}
-                    </select>
-                </td>
-            `;
-            tableBody.appendChild(row);
-        });
+                    row.innerHTML = `
+                        <td contenteditable="true">${docSnap.id}</td>
+                        <td contenteditable="true">${data.managerName || ""}</td>
+                        <td contenteditable="true">${data.areaName || ""}</td>
+                        <td>
+                            <select class="district-select">
+                                <option value="" disabled selected>Select District</option>
+                                ${districtOptions}
+                            </select>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
 
-        document.querySelectorAll('.district-select').forEach(select => {
-            select.addEventListener('change', (event) => {
-                const selectedDistrict = event.target.value;
-                if (districtLinks[selectedDistrict]) {
-                    window.location.href = districtLinks[selectedDistrict];
-                } else {
-                    alert("No link available for the selected district.");
-                }
-            });
-        });
-    } catch (error) {
-        console.error("Error loading data:", error);
-    }
-};
+                document.querySelectorAll('.district-select').forEach(select => {
+                    select.addEventListener('change', (event) => {
+                        const selectedDistrict = event.target.value;
+                        if (districtLinks[selectedDistrict]) {
+                            window.location.href = districtLinks[selectedDistrict];
+                        } else {
+                            alert("No link available for the selected district.");
+                        }
+                    });
+                });
+            } catch (error) {
+                console.error("Error loading data:", error);
+            }
+        };
 
-        const navigateToDistrict = (district) => {
-            const url = districtLinks[district];
-            if (url) {
-                window.location.href = url;
-            } else {
-                alert("Invalid district selected!");
+        const loadOtherTableData = async () => {
+            try {
+                // Load data into the "Area Manager Stock" table
+                const inventoryBody = document.getElementById('inventoryBody');
+                inventoryBody.innerHTML = "";
+
+                const inventorySnapshot = await getDocs(collection(db, "areamanager_enter_data"));
+                inventorySnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${data.product_id || ""}</td>
+                        <td>${data.product_name || ""}</td>
+                        <td>${data.quantity || ""}</td>
+                    `;
+                    inventoryBody.appendChild(row);
+                });
+
+                // Load data into the "Requested Items" table
+                const performanceBody = document.getElementById('performanceBody');
+                performanceBody.innerHTML = "";
+
+                const performanceSnapshot = await getDocs(collection(db, "areamanger_request_product"));
+                performanceSnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${data.shop_id || ""}</td>
+                        <td>${data.product_id || ""}</td>
+                        <td>${data.product_name || ""}</td>
+                        <td>${data.quantity || ""}</td>
+                    `;
+                    performanceBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error("Error loading other tables data:", error);
+            }
+        };
+
+        const loadInventoryDataArea1 = async () => {
+            try {
+                // Load data into the "Area Manager Stock" table from Area1 collection
+                const inventoryBody = document.getElementById('inventoryBody');
+                inventoryBody.innerHTML = "";
+
+                const area1Snapshot = await getDocs(collection(db, "Area1"));
+                area1Snapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${data.product_id || "N/A"}</td>
+                        <td>${data.product_name || "N/A"}</td>
+                        <td>${data.quantity || "N/A"}</td>
+                    `;
+                    inventoryBody.appendChild(row);
+                });
+
+                // Load data into the "Requested Items" table from Area1request_products collection
+                const performanceBody = document.getElementById('performanceBody');
+                performanceBody.innerHTML = "";
+
+                const area1RequestSnapshot = await getDocs(collection(db, "Area1request_products"));
+                area1RequestSnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${data.shop_id || ""}</td>
+                        <td>${data.product_id || ""}</td>
+                        <td>${data.product_name || ""}</td>
+                        <td>${data.quantity || ""}</td>
+                    `;
+                    performanceBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error("Error loading Area1 data:", error);
             }
         };
 
         const addRow = () => {
             const tableBody = document.getElementById('tableBody');
-            const newRow = document.createElement('tr');
-            const districtButtons = Object.keys(provinceDistricts).map(province => {
-                return provinceDistricts[province].map(district => `
-                    <button class="district-btn" data-district="${district}">${district}</button>
-                `).join("");
-            }).join("");
-
-            newRow.innerHTML = `
+            const row = document.createElement('tr');
+            row.innerHTML = `
                 <td contenteditable="true"></td>
                 <td contenteditable="true"></td>
                 <td contenteditable="true"></td>
-                <td>${districtButtons}</td>
+                <td>
+                    <select class="district-select">
+                        <option value="" disabled selected>Select District</option>
+                        ${Object.values(provinceDistricts).flat().map(district => 
+                            `<option value="${district}">${district}</option>`).join("")}
+                    </select>
+                </td>
             `;
-            tableBody.appendChild(newRow);
-
-            newRow.querySelectorAll('.district-btn').forEach(button => {
-                button.addEventListener('click', (event) => {
-                    const district = event.target.dataset.district;
-                    navigateToDistrict(district);
-                });
-            });
+            tableBody.appendChild(row);
         };
 
-        const saveAllRows = async () => {
+        const saveTableData = async () => {
             const tableBody = document.getElementById('tableBody');
             const rows = tableBody.querySelectorAll('tr');
+            rows.forEach(async (row) => {
+                const id = row.cells[0].innerText;
+                const managerName = row.cells[1].innerText;
+                const areaName = row.cells[2].innerText;
+                const district = row.cells[3].querySelector('select').value;
 
-            for (const row of rows) {
-                const cells = row.querySelectorAll('td');
-                const managerID = cells[0].textContent.trim();
-                const managerName = cells[1].textContent.trim();
-                const areaName = cells[2].textContent.trim();
-
-                if (managerID && managerName && areaName) {
-                    const docRef = doc(db, "area_manager02", managerID);
-                    await setDoc(docRef, { managerName, areaName });
+                if (id && managerName && areaName && district) {
+                    await setDoc(doc(db, "area_manager02", id), {
+                        managerName,
+                        areaName,
+                        district
+                    });
                 }
-            }
-
+            });
             alert("Data saved successfully!");
         };
 
-        const loadInventoryData = async () => {
-            const inventoryBody = document.getElementById('inventoryBody');
-            inventoryBody.innerHTML = "";
-
-            const querySnapshot = await getDocs(collection(db, "areamanager_enter_data"));
-            querySnapshot.forEach((docSnap) => {
-                const data = docSnap.data();
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${data.product_id || ""}</td>
-                    <td>${data.product_name || ""}</td>
-                    <td>${data.quantity || ""}</td>
-                `;
-                inventoryBody.appendChild(row);
-            });
-        };
-
-        const InventoryRecData = async () => {
-            const performanceBody = document.getElementById('performanceBody');
-            performanceBody.innerHTML = "";
-
-            const querySnapshot = await getDocs(collection(db, "areamanger_request_product"));
-            querySnapshot.forEach((docSnap) => {
-                const data = docSnap.data();
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${data.shop_id || ""}</td>
-                    <td>${data.product_id || ""}</td>
-                    <td>${data.product_name || ""}</td>
-                    <td>${data.quantity || ""}</td>
-                `;
-                performanceBody.appendChild(row);
-            });
-        };
-
         document.getElementById('addRow').addEventListener('click', addRow);
-        document.getElementById('saveButton').addEventListener('click', saveAllRows);
+        document.getElementById('saveButton').addEventListener('click', saveTableData);
+        document.getElementById('loadOtherTables').addEventListener('click', loadOtherTableData);
+        document.getElementById('loadInventoryDataArea1').addEventListener('click', loadInventoryDataArea1);
 
         window.addEventListener('DOMContentLoaded', () => {
             loadTableData();
-            loadInventoryData();
-            InventoryRecData();
         });
     </script>
 </body>
