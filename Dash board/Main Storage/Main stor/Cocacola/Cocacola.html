@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Main Stores</title>
+    <link rel="stylesheet" href="Cocacola.css">
+</head>
+<body>
+    <h1>Coca-Cola Products</h1>
+    <section id="inventory">
+        <table id="dataTable">
+            <thead>
+                <tr>
+                    <th>Product ID</th>
+                    <th>Product Name</th>
+                    <th>Quantity</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <!-- Rows will be dynamically populated -->
+            </tbody>
+        </table>
+    </section>
+    <button id="addRow">Add Row</button>
+    <div class="save">
+        <button id="saveButton" style="float:right" type="button">Save</button>
+    </div>
+    <div class="backbtn">
+        <button onclick="location.href='file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Main%20Storage/Main%20stor/Stor/store.html'">Back</button>
+    </div>
+
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getFirestore, collection, getDocs, setDoc, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDeyt839rDGcoH3LwRWuc65_CUg6D6S5XE",
+            authDomain: "test-8cd9e.firebaseapp.com",
+            projectId: "test-8cd9e",
+            storageBucket: "test-8cd9e.appspot.com",
+            messagingSenderId: "745412020745",
+            appId: "1:745412020745:web:701eed8c9075a3572c86d8",
+            measurementId: "G-91P7MY8658"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Function to load data from Firestore
+        const loadData = async () => {
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = ""; // Clear table for fresh data
+
+            try {
+                const querySnapshot = await getDocs(collection(db, "webMainStor"));
+                querySnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    const id = docSnap.id;
+
+                    // Filter for Coca-Cola products
+                    if (data.product_name && data.product_name.toLowerCase().includes("cocacola")) {
+                        const row = document.createElement('tr');
+                        row.setAttribute("data-id", id); // Store document ID
+                        row.innerHTML = `
+                            <td contenteditable="true">${data.product_id || ""}</td>
+                            <td contenteditable="true">${data.product_name || ""}</td>
+                            <td contenteditable="true">${data.quantity || ""}</td>
+                            <td><button class="deleteRow">Delete</button></td>
+                        `;
+                        tableBody.appendChild(row);
+                    }
+                });
+            } catch (error) {
+                console.error("Error loading data:", error);
+            }
+        };
+
+        // Add Row Functionality
+        const addRow = () => {
+            const tableBody = document.getElementById('tableBody');
+            const newRow = document.createElement('tr');
+
+            newRow.innerHTML = `
+                <td contenteditable="true"></td>
+                <td contenteditable="true"></td>
+                <td contenteditable="true"></td>
+                <td><button class="deleteRow">Delete</button></td>
+            `;
+            tableBody.appendChild(newRow);
+        };
+
+        // Save All Rows (New and Modified)
+        const saveAllRows = async () => {
+            try {
+                const tableBody = document.getElementById('tableBody');
+                const rows = tableBody.querySelectorAll('tr');
+
+                for (const row of rows) {
+                    const cells = row.querySelectorAll('td');
+                    const dataId = row.getAttribute("data-id") || cells[1].textContent.trim(); // Use existing ID or product name
+                    const productId = cells[0].textContent.trim();
+                    const productName = cells[1].textContent.trim();
+                    const quantity = parseInt(cells[2].textContent.trim(), 10) || 0;
+
+                    if (!productName) {
+                        alert("Product name is required for saving!");
+                        continue; // Skip rows without a product name
+                    }
+
+                    // Save or Update in Firestore
+                    await setDoc(doc(db, "webMainStor", dataId), {
+                        product_id: productId,
+                        product_name: productName,
+                        quantity
+                    });
+
+                    console.log(`Document ${dataId} saved/updated successfully!`);
+
+                    // Update the row's data-id attribute
+                    row.setAttribute("data-id", dataId);
+                }
+
+                alert("All changes saved successfully!");
+            } catch (error) {
+                console.error("Error saving rows:", error);
+            }
+        };
+
+        // Delete Row Functionality
+        document.getElementById('tableBody').addEventListener('click', async (e) => {
+            if (e.target.classList.contains('deleteRow')) {
+                const row = e.target.closest('tr');
+                const dataId = row.getAttribute("data-id");
+
+                if (dataId) {
+                    try {
+                        await deleteDoc(doc(db, "webMainStor", dataId));
+                        console.log(`Document ${dataId} deleted successfully!`);
+                    } catch (error) {
+                        console.error("Error deleting document:", error);
+                    }
+                }
+                row.remove();
+            }
+        });
+
+        // Load Data on Page Load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            document.getElementById('addRow').addEventListener('click', addRow);
+            document.getElementById('saveButton').addEventListener('click', saveAllRows);
+        });
+    </script>
+</body>
+</html>

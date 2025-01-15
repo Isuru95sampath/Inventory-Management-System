@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main Stores</title>
+    <link rel="stylesheet" href="store.css">
+    
+</head>
+<body>
+    <h1>Main Stores</h1>
+    <!-- Search Container -->
+    <div class="search-container">
+        <input type="text" id="search-bar" placeholder="Search product name...">
+        <button id="go-button"><b>Search</b></button>
+    </div>
+
+    <!-- Results Display -->
+    <div id="results">
+        <table id="results-table" style="display: none;">
+            <thead>
+                <tr>
+                    <th>Product ID</th>
+                    <th>Product Name</th>
+                    <th>Quantity</th>
+                </tr>
+            </thead>
+            <tbody id="results-body">
+                <!-- Dynamic rows will be added here -->
+            </tbody>
+        </table>
+        <p id="no-results" style="display: none;">No results found for your search.</p>
+    </div>
+
+    <!-- Dropdown Navigation -->
+    <div class="dropdown">
+        <button class="dropbtn"><b>Products</b></button>
+        <div class="dropdown-content">
+            <a href="file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Main%20Storage/Main%20stor/Cocacola/Cocacola.html">Coca-Cola</a>
+            <a href="file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Main%20Storage/Main%20stor/Sprite/Sprite.html">Sprite</a>
+            <a href="file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Main%20Storage/Main%20stor/Portello/Portello.html">Portello</a>
+            <a href="file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Main%20Storage/Main%20stor/Fanta/Fanta.html">Fanta</a>
+        </div>
+    </div>
+    <div class="homebtn">
+        <a href="file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Home%20page/home.html#report" class="home-button">
+            Home
+        </a>
+    </div>
+    
+    <!-- Firebase Integration -->
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+    
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDeyt839rDGcoH3LwRWuc65_CUg6D6S5XE",
+            authDomain: "test-8cd9e.firebaseapp.com",
+            projectId: "test-8cd9e",
+            storageBucket: "test-8cd9e.appspot.com",
+            messagingSenderId: "745412020745",
+            appId: "1:745412020745:web:701eed8c9075a3572c86d8",
+            measurementId: "G-91P7MY8658"
+        };
+    
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+    
+        // DOM Elements
+        const searchBar = document.getElementById('search-bar');
+        const goButton = document.getElementById('go-button');
+        const resultsTable = document.getElementById('results-table');
+        const resultsBody = document.getElementById('results-body');
+        const noResultsMessage = document.getElementById('no-results');
+    
+        // Search Functionality
+        const performSearch = async () => {
+            const searchValue = searchBar.value.trim().toLowerCase(); // Convert input to lowercase for case-insensitivity
+    
+            if (!searchValue) {
+                alert("Please enter a product ID or product name to search.");
+                return;
+            }
+    
+            try {
+                // Clear previous results
+                resultsBody.innerHTML = "";
+                resultsTable.style.display = "none";
+                noResultsMessage.style.display = "none";
+    
+                // Fetch all documents from Firestore collection
+                const querySnapshot = await getDocs(collection(db, "webMainStor"));
+    
+                let resultsFound = false;
+    
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const productId = data.product_id.toLowerCase();
+                    const productName = data.product_name.toLowerCase();
+    
+                    // Check if input matches product_id or product_name (case-insensitive)
+                    if (productId === searchValue || productName === searchValue) {
+                        const row = `
+                            <tr>
+                                <td>${data.product_id}</td>
+                                <td>${data.product_name}</td>
+                                <td>${data.quantity}</td>
+                            </tr>
+                        `;
+                        resultsBody.innerHTML += row;
+                        resultsFound = true;
+                    }
+                });
+    
+                if (resultsFound) {
+                    resultsTable.style.display = "table"; // Show the table if results are found
+                } else {
+                    noResultsMessage.style.display = "block"; // Show no results message
+                }
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                alert("An error occurred while searching. Please try again.");
+            }
+        };
+    
+        // Attach event listener to the search button
+        goButton.addEventListener('click', performSearch);
+    </script>
+    
+    
+</body>
+</html>
