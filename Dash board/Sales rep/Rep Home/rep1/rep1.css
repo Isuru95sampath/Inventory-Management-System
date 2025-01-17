@@ -1,0 +1,192 @@
+/* General Styles */
+body {
+    font-family: 'Roboto Slab', serif;
+    background-image: url("Background.webp"); /* Ensure correct image path */
+    background-size: cover; /* Ensure the image covers the viewport */
+    background-repeat: no-repeat; /* Prevent repetition */
+    background-position: center; /* Center the image */
+    background-attachment: fixed; /* Keep the background fixed during scrolling */
+    margin: 0; /* Remove default margins */
+    padding: 0;
+    color: #333; /* Darker text for better readability */
+    line-height: 1.6; /* Improve readability */
+}
+
+/* Header Styles */
+h1 {
+    text-align: center;
+    font-size: 2.5rem; /* Responsive font size */
+    color: #fff;
+    background-color: #1c3129e7;
+    padding: 20px;
+    margin: 0; /* Remove default margin */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add subtle shadow */
+}
+
+h2 {
+    text-align: center;
+    background-color: #a2dbe9c5;
+    padding: 10px;
+    margin: 20px 0; /* Add spacing */
+    border-radius: 8px; /* Rounded corners */
+    font-size: 1.8rem; /* Responsive font size */
+    color: #1d0479; /* Darker text for contrast */
+}
+
+/* Client Info Section */
+#clients {
+    background-color: #022129d7;
+    width: 90%; /* Responsive width */
+    max-width: 400px; /* Limit maximum width */
+    margin: 20px; /* Center the box */
+    padding: 20px;
+    border-radius: 19px;
+    color: #fff;
+    font-size: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add shadow */
+}
+
+/* Image Styling */
+img {
+    position: absolute;
+    width: 40%;
+    height: auto; /* Maintain aspect ratio */
+    top: 100px;
+    left: 60%; /* Adjust positioning */
+    transform: translateX(-50%); /* Center horizontally */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add shadow */
+}
+
+/* Section Styling */
+section {
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
+    margin: 20px auto; /* Center sections */
+    width: 90%; /* Responsive width */
+    max-width: 1200px; /* Limit maximum width */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add shadow */
+}
+
+/* Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1em;
+    background-color: #fff; /* White background for tables */
+    border-radius: 8px; /* Rounded corners */
+    overflow: hidden; /* Ensure rounded corners are visible */
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd; /* Light border for subtle separation */
+}
+
+th {
+    background-color: #33ad99;
+    color: #fff; /* White text for headers */
+    font-weight: bold;
+    text-transform: uppercase; /* Uppercase headers */
+    font-size: 1.2rem; /* Larger font size for headers */
+}
+
+td {
+    background-color: #f9f9f9; /* Light gray for table rows */
+    color: #333; /* Darker text for readability */
+    font-size: 1.2rem; /* Increased font size for table data */
+}
+
+/* Button Styling */
+button {
+    padding: 10px 20px;
+    background-color: #28a3a7;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    margin: 10px;
+    border-radius: 5px;
+    font-size: 1rem; /* Responsive font size */
+    transition: background-color 0.3s ease; /* Smooth hover effect */
+}
+
+button:hover {
+    background-color: #218838; /* Darker green on hover */
+}
+
+/* Button Container */
+.button-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center; /* Center buttons horizontally */
+    align-items: center;
+    gap: 15px; /* Spacing between buttons */
+    margin-top: 20px; /* Add spacing above buttons */
+}
+
+/* Form Styling */
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px 0;
+}
+
+label, input {
+    margin: 0.5em 0;
+    width: 100%; /* Full width inputs */
+    max-width: 400px; /* Limit maximum width */
+}
+
+input[type="text"], input[type="number"] {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+input[type="submit"] {
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+input[type="submit"]:hover {
+    background-color: #218838;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2rem; /* Smaller font size for mobile */
+    }
+
+    h2 {
+        font-size: 1.5rem; /* Smaller font size for mobile */
+    }
+
+    #clients {
+        width: 95%; /* Full width on smaller screens */
+    }
+
+    img {
+        width: 80%; /* Larger image on smaller screens */
+        left: 50%; /* Center image */
+    }
+
+    .button-container {
+        flex-direction: column; /* Stack buttons vertically on small screens */
+    }
+
+    /* Adjust table font size for smaller screens */
+    th, td {
+        font-size: 1rem; /* Slightly smaller font size for mobile */
+    }
+}

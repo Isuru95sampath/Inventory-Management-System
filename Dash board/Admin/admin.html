@@ -5,6 +5,66 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="admin.css">
+    <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDeyt839rDGcoH3LwRWuc65_CUg6D6S5XE",
+            authDomain: "test-8cd9e.firebaseapp.com",
+            projectId: "test-8cd9e",
+            storageBucket: "test-8cd9e.appspot.com",
+            messagingSenderId: "745412020745",
+            appId: "1:745412020745:web:701eed8c9075a3572c86d8",
+            measurementId: "G-91P7MY8658"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Function to fetch user data
+        const fetchUserData = async () => {
+            try {
+                const usersRef = collection(db, "users");
+                const querySnapshot = await getDocs(usersRef);
+
+                let userInfoHTML = "";
+
+                querySnapshot.forEach((doc) => {
+                    const userData = doc.data();
+                    const username = userData.username || "Unknown";
+                    const email = userData.email || "No Email";
+
+                    userInfoHTML += `
+                        <div class="user-card">
+                             <img src="R.png" alt="Profile Image" class="profile-image">
+                            <h3>Name :${username}</h3>
+                            <p><b>Email:</b> ${email}</p>
+                        </div>
+                        <button class="homebtn">
+                <a href="file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Home%20page/home.html">Home</a>
+            </button>
+                    `;
+                });
+
+                if (userInfoHTML === "") {
+                    userInfoHTML = "<p>No users found in the database.</p>";
+                }
+
+                document.querySelector(".users-container").innerHTML = userInfoHTML;
+            } catch (error) {
+                console.error("Error fetching user data:", error);
+                document.querySelector(".users-container").innerHTML = "<p>Error loading user data. Please try again later.</p>";
+            }
+        };
+
+        // Load user data on page load
+        document.addEventListener("DOMContentLoaded", fetchUserData);
+    </script>
 </head>
 <body>
     <header>
@@ -12,15 +72,9 @@
     </header>
 
     <main class="container">
-        <div class="profile-card">
-            <img src="R.png" alt="Admin Image" class="profile-image">
-            <h2 class="profile-name">Nimal</h2>
-            <p class="profile-detail"><b>Email:</b> nimal@gmail.com</p>
-            <button class="homebtn">
-                <a href='file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Home%20page/home.html'>Home</a>
-           
+        <section class="users-container">
+            <p>Loading user data...</p>
+        </section>
+    </main>
 </body>
 </html>
-
-    
-

@@ -63,6 +63,8 @@ section {
     border-radius: 15px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
     color: #000000;
+    text-align: center;
+    justify-content: center;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -81,7 +83,7 @@ a {
 
 /* Apply border-radius to all tables */
 table {
-    width: 98%;
+    width: 99%;
     border-collapse: collapse;
     margin-bottom: 2em;
     background-color: rgba(149, 225, 228, 0.7); 

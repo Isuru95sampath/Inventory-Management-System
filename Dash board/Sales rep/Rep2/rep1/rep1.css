@@ -1,0 +1,126 @@
+body {
+    font-family: 'Roboto Slab', serif;
+    background-image: url("Background.webp"); /* Ensure correct image path */
+    background-size: cover; /* Ensure the image covers the viewport */
+    background-repeat: no-repeat; /* Prevent repetition */
+    background-position: center; /* Center the image */
+    background-attachment: fixed; /* Keep the background fixed during scrolling */
+    margin: 0; /* Remove default margins */
+    padding: 0;
+    color: #020202; /* Ensure text contrasts with the background */
+}
+h1{
+    text-align: center;
+    font-size: 43px;
+    color: #fff;
+    background-color: #1c3129e7;
+    width: 100%;
+    padding: 20px;
+    -webkit-text-stroke: 0px #160bad
+
+}
+h2{
+    text-align: center;
+    background-color: #a2dbe9c5;
+    height: 40px;
+    padding: 5px;
+    
+
+}
+img{
+    position: absolute;
+    width: 40%;
+    height: 40%;
+    top: 95px;
+    left: 700px;
+}
+#clients{
+    background-color: #022129d7;
+    width: 400px;
+    height: 200px;
+    border-radius: 19px;
+    text-align: left;
+    color: #fff;
+   font-size: 17px;
+   padding: 10px 0px 0px 15px;
+
+}
+
+section {
+    padding: 10px;
+    background: #03776400;
+    margin: 10px 0;
+    
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1em;
+    background-color: rgb(124, 234, 241);
+}
+table, th, td {
+    border: 2px solid #1d0479;
+}
+th, td {
+    padding: 1em;
+    text-align: left;
+}
+td {
+    border: 2px solid #070707;
+    padding: 10px;
+    text-align: center; 
+    vertical-align: middle; 
+    font-weight: bold; 
+    font-size: 20px; 
+}
+th{
+    background-color: #33ad99;
+}
+button {
+    padding: 0.5em 1em;
+    background-color: #28a3a7;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    margin: 10px;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #218838;
+}
+
+/* Add a parent class to align buttons horizontally */
+.button-container {
+    display: flex; /* Use flexbox for layout */
+    flex-direction: row; /* Arrange items in a row */
+    justify-content: left; /* Center align horizontally */
+    align-items: center; /* Align items vertically */
+    gap: 15px; /* Add spacing between buttons */
+}
+
+
+
+
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+label, input {
+    margin: 0.5em 0;
+}
+
+input[type="submit"] {
+    padding: 0.5em 1em;
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+input[type="submit"]:hover {
+    background-color: #218838;
+}

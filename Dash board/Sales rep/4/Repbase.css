@@ -1,0 +1,100 @@
+    /* styles.css */
+
+    body {
+        font-family:   'Roboto Slab', serif ;
+        margin: 0;
+        padding: 20px;
+        background-image: url("Background.webp");
+    }
+
+    h1 {
+        font-family:   'Roboto Slab', serif ;
+        text-align: center;
+        font-size: 35px;
+        color: #fff;
+        background-color: #1c3129e0;
+        width: 100%;
+        padding: 10px;
+    }
+    h1:first-letter{
+        font-size: 50px;
+
+    }
+    h3 {
+        font-size: 30px;
+        display: inline-block;
+        vertical-align: top;
+        margin-right: 20px;
+    }
+
+    table {
+        width: 80%;
+        margin: 20px auto;
+        border-collapse: collapse;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        background-color: #86b1c5;
+    }
+
+    th, td {
+        padding: 12px;
+        border: 1px solid #ddd;
+        text-align: center;
+        font-size: 18px;
+    }
+    a {
+        text-decoration: none;
+        color: #06318f;
+        font-weight: bold;
+    }
+
+    thead {
+        background-color: #1f494b;
+        color: rgb(252, 252, 252);
+    }
+
+    tbody tr:nth-child(even) {
+        background-color: #f2f2f2;
+        padding: 50%;
+    }
+
+    tbody tr:hover {
+        background-color: #4a8fa0;
+    }
+    .homebtn button {
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        border: none;
+        border-radius: 8px;
+        background-color: #2385d6;
+        color: white;
+        font-weight: bold;
+        margin: 10px;
+    }
+    
+
+    /*serch bar ek */
+    .search-container {
+        text-align: center;
+        margin-bottom: 10px;
+        
+    }
+    /* Style for search input */
+    #searchBar {
+        padding: 10px;
+        width: 40%;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+    button {
+        padding: 9px;
+        font-size: 16px;
+        margin-right: 50px;
+        cursor: pointer;
+        border-radius: 8px;
+        background-color: rgb(6, 207, 83);
+        width: 73px;
+    }
+

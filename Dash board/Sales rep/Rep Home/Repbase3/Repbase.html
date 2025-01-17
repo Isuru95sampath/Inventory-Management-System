@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REP HOME</title>
+    <link rel="stylesheet" href="Repbase.css">
+</head>
+<body>
+    <h1>Sales Representers - Southern</h1>
+
+    <table id="dataTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Area Name</th>
+                <th>Main Town</th>
+                <th>Shops</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Sales%20rep/Rep%20Home/rep1/rep1.html">SIDGMK1</a></td>
+                <td contenteditable="true">S.M.P. Kumara</td>
+                <td>Galla</td>
+                <td>Maharagama</td>
+                <td><a href="file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Sales%20rep/Shops/Shop1/shop1.html">SH013</a></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td contenteditable="true"></td>
+                <td></td>
+                <td></td>
+                <td><a href="file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Sales%20rep/Shops/Shop2/Shop2.html">SH018</a></td>
+            </tr>
+            <tr>
+                <td><a href="file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Sales%20rep/Rep%20Home/rep2/rep2.html">SIDGMK2</a></td>
+                <td contenteditable="true">M.P. Karunarathna</td>
+                <td>Mathara</td>
+                <td>Horana</td>
+                <td><a href="file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Sales%20rep/Shops/Shop3/Shop3.html">SH013</a></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td contenteditable="true"></td>
+                <td></td>
+                <td></td>
+                <td><a href="file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Sales%20rep/Shops/Shop4/Shop4.html">SH07</a></td>
+            </tr>
+            <tr>
+                <td><a href="file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Sales%20rep/Rep%20Home/rep3/rep3.html">SIDGMK3</a></td>
+                <td contenteditable="true">A.A.W. Wimalasekara</td>
+                <td>Hambanthota</td>
+                <td>Gampaha</td>
+                <td><a href="file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Sales%20rep/Shops/Shop5/Shop5.html">SR18</a></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td contenteditable="true"></td>
+                <td></td>
+                <td></td>
+                <td><a href="file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Sales%20rep/Shops/Shop5/Shop5.html">SH017</a></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="homebtn">
+        <button onclick="location.href='file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Home%20page/home.html#report'">Home</button>
+    </div>
+    <div class="rep-container">
+        <button onclick="location.href='file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Sales%20rep/Rep%20Home/Repbase.html'">01</button>
+        <button onclick="location.href='file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Sales%20rep/Rep%20Home/Repbase2/Repbase.html'">02</button>
+        <button onclick="location.href='file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Sales%20rep/Rep%20Home/Repbase3/Repbase.html'">03</button>
+        <button onclick="location.href='#'">04</button>
+        <button onclick="location.href='#'">05</button>
+        <button onclick="location.href='#'">06</button>
+        <button onclick="location.href='#'">07</button>
+        <button onclick="location.href='#'">08</button>
+        <button onclick="location.href='#'">09</button>
+    </div>
+
+    <script>
+        // Function to save data to localStorage
+        function saveData() {
+            const rows = document.querySelectorAll("#dataTable tbody tr");
+            const data = [];
+
+            rows.forEach((row) => {
+                const cells = row.querySelectorAll("td");
+                const rowData = {
+                    id: cells[0].textContent.trim(),
+                    name: cells[1].textContent.trim(),
+                    area: cells[2].textContent.trim(),
+                    town: cells[3].textContent.trim(),
+                    shop: cells[4].textContent.trim(),
+                };
+                data.push(rowData);
+            });
+
+            // Save data to localStorage
+            localStorage.setItem("salesRepDataSouthern", JSON.stringify(data));
+        }
+
+        // Function to load data from localStorage
+        function loadData() {
+            const savedData = localStorage.getItem("salesRepDataSouthern");
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                const rows = document.querySelectorAll("#dataTable tbody tr");
+
+                rows.forEach((row, index) => {
+                    const cells = row.querySelectorAll("td");
+                    if (data[index]) {
+                        cells[1].textContent = data[index].name; // Update the Name column
+                    }
+                });
+            }
+        }
+
+        // Add event listeners to make cells editable and auto-save
+        document.querySelectorAll("#dataTable tbody td[contenteditable='true']").forEach((cell) => {
+            cell.addEventListener("input", () => {
+                saveData(); // Auto-save when data is edited
+            });
+        });
+
+        // Load saved data when the page loads
+        window.addEventListener("load", loadData);
+    </script>
+</body>
+</html>

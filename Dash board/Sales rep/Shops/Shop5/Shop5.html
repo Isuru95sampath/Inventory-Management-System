@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Management</title>
+    <link rel="stylesheet" href="Shop5.css">
+</head>
+<body>
+    <section id="dashboard">
+        <h1>Sunera Stores</h1>
+    </section>
+    <section id="clients">
+       <p>Name - Sunera</p>
+       <p>Shop ID - SR3</p>
+       <p>Main City - Gampaha</p>
+       
+    </section>
+    <section id="inventory">
+        <h2>Shop Stock</h2>
+        <table id="inventory-table">
+            <thead>
+                <tr>
+                    <th>Shop ID</th>
+                    <th>Product ID</th>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                </tr>
+            </thead>
+            <tbody id="inventory-tableBody">
+                <!-- Inventory items will be populated here -->
+            </tbody>
+        </table>
+    </section>
+    <!--<section id="performance">
+        <h2>Requested Items</h2>
+        <table id="performance-table">
+            <thead>
+                <tr>
+                    <th>Shop ID</th>
+                    <th>Product ID</th>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                </tr>
+            </thead>
+            <tbody id="performance-tableBody">
+                <!-- Requested items will be populated here -->
+            </tbody>
+        </table>
+        <div class="button-container">
+          <!-- <button id="done">Done</button>-->
+          <button onclick="location.href='file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Sales%20rep/Rep%20Home/Repbase.html'">Back</button>
+            <button onclick="location.href='file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Home%20page/home.html#report'">Home</button>
+        </div>
+    </section>
+
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDeyt839rDGcoH3LwRWuc65_CUg6D6S5XE",
+            authDomain: "test-8cd9e.firebaseapp.com",
+            projectId: "test-8cd9e",
+            storageBucket: "test-8cd9e.appspot.com",
+            messagingSenderId: "745412020745",
+            appId: "1:745412020745:web:701eed8c9075a3572c86d8",
+            measurementId: "G-91P7MY8658"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Function to load all data into the Inventory table
+        const loadInventoryData = async () => {
+            try {
+                console.log("Loading all inventory data...");
+                const inventoryBody = document.getElementById('inventory-tableBody');
+                inventoryBody.innerHTML = ""; // Clear existing rows
+
+                const querySnapshot = await getDocs(collection(db, "shop5_enter_data"));
+                querySnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${data["Shop Id"] || "N/A"}</td>
+                        <td>${data.product_id || "N/A"}</td>
+                        <td>${data.product_name || "N/A"}</td>
+                        <td>${data.quantity || "N/A"}</td>
+                    `;
+                    inventoryBody.appendChild(row);
+                });
+
+                console.log("All inventory data loaded successfully!");
+            } catch (error) {
+                console.error("Error loading inventory data:", error);
+                alert("Failed to load inventory data. Please try again later.");
+            }
+        };
+
+        // Function to load requested items data
+        const loadRequestedItemsData = async () => {
+            try {
+                console.log("Loading requested items...");
+                const performanceBody = document.getElementById('performance-tableBody');
+                performanceBody.innerHTML = ""; // Clear existing rows
+
+                const querySnapshot = await getDocs(collection(db, "shop_request_product"));
+                querySnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${data.shop_id || "N/A"}</td>
+                        <td>${data.product_id || "N/A"}</td>
+                        <td>${data.product_name || "N/A"}</td>
+                        <td>${data.quantity || "N/A"}</td>
+                    `;
+                    performanceBody.appendChild(row);
+                });
+
+                console.log("Requested items data loaded successfully!");
+            } catch (error) {
+                console.error("Error loading requested items data:", error);
+                alert("Failed to load requested items. Please try again later.");
+            }
+        };
+
+        // Load data on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            loadInventoryData();
+            loadRequestedItemsData();
+        });
+    </script>
+</body>
+</html>

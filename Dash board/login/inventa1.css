@@ -10,7 +10,7 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: url('Background.png') no-repeat center center/cover;
+    background: url('Backgroundf.jpg') no-repeat center center/cover;
     background-size: cover;
     background-position: center;
     color: #fff;
@@ -43,7 +43,7 @@ body {
     padding: 40px 50px;
     width: 380px;
     border-radius: 12px;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.863);
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
     text-align: center;
     transition: transform 0.4s ease-in-out, box-shadow 0.4s ease;
