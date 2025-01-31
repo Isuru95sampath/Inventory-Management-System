@@ -24,9 +24,9 @@
 
     <!-- Buttons for Adding Rows and Saving Data -->
     <button id="addRow"></button>
-    <div class="save">
+   <!-- <div class="save">
         <button id="saveButton" style="float:right" type="button">Save</button>
-    </div>
+    </div>-->
 
     <!-- Inventory Section -->
     <section id="inventory">
@@ -49,7 +49,7 @@
         <table id="performance-table">
             <thead>
                 <tr>
-                    <th>Shop ID</th>
+                   <!-- <th>Shop ID</th>-->
                     <th>Product ID</th>
                     <th>Product Name</th>
                     <th>Quantity</th>
@@ -70,14 +70,17 @@
         </div>
     </section>
 
-    <!-- Home Button -->
+    <div class="domBtn">
+        <button id="doneButton">Done</button>
+    </div>
+
     <div class="homebtn">
         <button onclick="location.href='file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Home%20page/home.html'">Home</button>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-        import { getFirestore, collection, getDocs, setDoc, doc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, setDoc, doc, onSnapshot, query, orderBy, deleteDoc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
 
         // Firebase Configuration
         const firebaseConfig = {
@@ -174,7 +177,7 @@
                     // Validate required fields
                     if (id && name && province && district) {
                         // Update Firestore document with merge: true to update existing data
-                        await setDoc(doc(db, "area_managers", id), {
+                        await setDoc(doc(db, "Area1", id), {
                             id: id, // Save the field ID
                             name: name,
                             province: province,
@@ -192,91 +195,118 @@
             }
         };
 
-        // Load Other Table Data (Inventory and Performance)
-        const loadOtherTableData = async () => {
+        // Function to load only the last updated documents in Area Manager Stock
+        const loadLatestInventoryData = async () => {
             try {
-                // Load Inventory Data
+                console.log("Loading latest inventory data...");
                 const inventoryBody = document.getElementById('inventoryBody');
-                inventoryBody.innerHTML = "";
+                inventoryBody.innerHTML = ""; // Clear the table
 
-                const inventorySnapshot = await getDocs(collection(db, "areamanager_enter_data"));
-                inventorySnapshot.forEach((docSnap) => {
+                // Query Firestore to get the latest document for each product_id
+                const querySnapshot = await getDocs(
+                    query(collection(db, "Area1"), orderBy("timestamp", "desc"))
+                );
+
+                const latestProducts = {};
+
+                querySnapshot.forEach((docSnap) => {
                     const data = docSnap.data();
+                    const productId = data.product_id;
+
+                    // If the product_id is not in the latestProducts object, add it
+                    if (!latestProducts[productId]) {
+                        latestProducts[productId] = data;
+                    }
+                });
+
+                // Populate the table with the latest data for each product_id
+                Object.values(latestProducts).forEach((product) => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td>${data.product_id || ""}</td>
-                        <td>${data.product_name || ""}</td>
-                        <td>${data.quantity || ""}</td>
+                        <td>${product.product_id || ""}</td>
+                        <td>${product.product_name || ""}</td>
+                        <td>${product.quantity || ""}</td>
                     `;
                     inventoryBody.appendChild(row);
                 });
 
-                // Load Performance Data
-                const performanceBody = document.getElementById('performanceBody');
-                performanceBody.innerHTML = "";
-
-                const performanceSnapshot = await getDocs(collection(db, "areamanger_request_product"));
-                performanceSnapshot.forEach((docSnap) => {
-                    const data = docSnap.data();
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${data.shop_id || ""}</td>
-                        <td>${data.product_id || ""}</td>
-                        <td>${data.product_name || ""}</td>
-                        <td>${data.quantity || ""}</td>
-                    `;
-                    performanceBody.appendChild(row);
-                });
+                console.log("Latest inventory data loaded successfully!");
             } catch (error) {
-                console.error("Error loading other tables data:", error);
+                console.error("Error loading latest inventory data:", error);
             }
         };
 
-        // Load Inventory Data for Area1
-        const loadInventoryDataArea1 = async () => {
+        // Function to load only the last updated documents in Requested Items
+        const loadLatestRequestedItemsData = async () => {
             try {
-                // Load Inventory Data from Area1
-                const inventoryBody = document.getElementById('inventoryBody');
-                inventoryBody.innerHTML = "";
+                console.log("Loading latest requested items data...");
+                const performanceBody = document.getElementById('performanceBody');
+                performanceBody.innerHTML = ""; // Clear the table
 
-                const area1Snapshot = await getDocs(collection(db, "Area1"));
-                area1Snapshot.forEach((docSnap) => {
+                // Query Firestore to get the latest document for each product_id
+                const querySnapshot = await getDocs(
+                    query(collection(db, "Area1 request_products"), orderBy("timestamp", "desc"))
+                );
+
+                const latestProducts = {};
+
+                querySnapshot.forEach((docSnap) => {
                     const data = docSnap.data();
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${data.product_id || "N/A"}</td>
-                        <td>${data.product_name || "N/A"}</td>
-                        <td>${data.quantity || "N/A"}</td>
-                    `;
-                    inventoryBody.appendChild(row);
+                    const productId = data.product_id;
+
+                    // If the product_id is not in the latestProducts object, add it
+                    if (!latestProducts[productId]) {
+                        latestProducts[productId] = data;
+                    }
                 });
 
-                // Load Requested Items Data from Area1request_products
-                const performanceBody = document.getElementById('performanceBody');
-                performanceBody.innerHTML = "";
-
-                const area1RequestSnapshot = await getDocs(collection(db, "Area1 request_products"));
-                area1RequestSnapshot.forEach((docSnap) => {
-                    const data = docSnap.data();
+                // Populate the table with the latest data for each product_id
+                Object.values(latestProducts).forEach((product) => {
                     const row = document.createElement('tr');
+
+                    //<td>${product.shop_id || ""}</td>
+
+
                     row.innerHTML = `
-                        <td>${data.shop_id || ""}</td>
-                        <td>${data.product_id || ""}</td>
-                        <td>${data.product_name || ""}</td>
-                        <td>${data.quantity || ""}</td>
+                        
+                        <td>${product.product_id || ""}</td>
+                        <td>${product.product_name || ""}</td>
+                        <td>${product.quantity || ""}</td>
                     `;
                     performanceBody.appendChild(row);
                 });
+
+                console.log("Latest requested items data loaded successfully!");
             } catch (error) {
-                console.error("Error loading Area1 data:", error);
+                console.error("Error loading latest requested items data:", error);
             }
         };
 
-        // Event Listeners
-        document.getElementById('addRow').addEventListener('click', addRow);
-        document.getElementById('saveButton').addEventListener('click', saveTableData);
-        document.getElementById('loadOtherTables').addEventListener('click', loadOtherTableData);
-        document.getElementById('loadInventoryDataArea1').addEventListener('click', loadInventoryDataArea1);
+        // Function to delete all documents in the "Area1 request_products" collection
+        const deleteRequestedItems = async () => {
+            try {
+                const querySnapshot = await getDocs(collection(db, "Area1 request_products"));
+                querySnapshot.forEach(async (docSnap) => {
+                    await deleteDoc(doc(db, "Area1 request_products", docSnap.id));
+                });
+                console.log("All requested items deleted successfully!");
+            } catch (error) {
+                console.error("Error deleting requested items:", error);
+            }
+        };
+
+        // Clear the Requested Items table and delete data from Firestore when the Done button is clicked
+        document.getElementById('doneButton').addEventListener('click', async () => {
+            const performanceBody = document.getElementById('performanceBody');
+            performanceBody.innerHTML = ""; // Clear the table
+            await deleteRequestedItems(); // Delete data from Firestore
+        });
+
+        // Load both tables when the "01" button is pressed
+        document.getElementById('loadOtherTables').addEventListener('click', () => {
+            loadLatestInventoryData(); // Load latest inventory data
+            loadLatestRequestedItemsData(); // Load latest requested items data
+        });
 
         // Load Table Data on Page Load
         window.addEventListener('DOMContentLoaded', () => {

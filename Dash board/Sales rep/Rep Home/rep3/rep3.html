@@ -12,8 +12,8 @@
         <h1>Sales Representer</h1>
     </section>
     <div id="clients">
-       <p>Name - A.A.W. Wimalasekara</p>
-       <p>Rep ID - SIDGMK3</p>
+       <p>Name - Sunera</p>
+       <p>Rep ID - SR3</p>
        <p>Main City - Gampaha</p>
        
        <!--<img src="work.png">-->
@@ -23,7 +23,6 @@
         <table id="inventory-table">
             <thead>
                 <tr>
-                    <th>Shop ID</th>
                     <th>Product ID</th>
                     <th>Item</th>
                     <th>Quantity</th>
@@ -34,19 +33,7 @@
             </tbody>
         </table>
     </section>
-    <section id="performance">
-        <h2>Requested Items</h2>
-        <table id="performance-table">
-            <thead>
-                <tr>
-                    <th>Shop ID</th>
-                    <th>Product ID</th>
-                    <th>Item</th>
-                    <th>Quantity</th>
-                </tr>
-            </thead>
-            <tbody id="performance-tableBody">
-                <!-- Performance metrics will be populated here -->
+   
             </tbody>
         </table>
         <div class="button-container">
@@ -54,84 +41,70 @@
             <button onclick="location.href='file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Sales%20rep/Rep%20Home/Repbase.html'">RepBase</button>
             <button onclick="location.href='file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Home%20page/home.html#report'">Home</button>
         </div>
-    </section>
-    <script type="module">
-        // Import Firebase modules
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
-
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyDeyt839rDGcoH3LwRWuc65_CUg6D6S5XE",
-            authDomain: "test-8cd9e.firebaseapp.com",
-            projectId: "test-8cd9e",
-            storageBucket: "test-8cd9e.appspot.com",
-            messagingSenderId: "745412020745",
-            appId: "1:745412020745:web:701eed8c9075a3572c86d8",
-            measurementId: "G-91P7MY8658"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        // Function to load data into the Inventory table
-        const loadInventoryData = async () => {
-            try {
-                console.log("Loading inventory data...");
-                const inventoryBody = document.getElementById('inventory-tableBody');
-                inventoryBody.innerHTML = ""; // Clear existing rows
-
-                const querySnapshot = await getDocs(collection(db, "salesrep3_enter_data"));
-                querySnapshot.forEach((docSnap) => {
-                    const data = docSnap.data();
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${data.shop_id || ""}</td>
-                        <td>${data.product_id || ""}</td>
-                        <td>${data.product_name || ""}</td>
-                        <td>${data.quantity || ""}</td>
-                    `;
-                    inventoryBody.appendChild(row);
-                });
-
-                console.log("Inventory data loaded successfully!");
-            } catch (error) {
-                console.error("Error loading inventory data:", error);
-            }
-        };
-
-        // Function to load data into the Requested Items table
-        const loadRequestedItemsData = async () => {
-            try {
-                console.log("Loading requested items...");
-                const performanceBody = document.getElementById('performance-tableBody');
-                performanceBody.innerHTML = ""; // Clear existing rows
-
-                const querySnapshot = await getDocs(collection(db, "salesrep3_request_product"));
-                querySnapshot.forEach((docSnap) => {
-                    const data = docSnap.data();
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${data.shop_id || ""}</td>
-                        <td>${data.product_id || ""}</td>
-                        <td>${data.product_name || ""}</td>
-                        <td>${data.quantity || ""}</td>
-                    `;
-                    performanceBody.appendChild(row);
-                });
-
-                console.log("Requested items data loaded successfully!");
-            } catch (error) {
-                console.error("Error loading requested items data:", error);
-            }
-        };
-
-        // Load data on page load
-        window.addEventListener('DOMContentLoaded', () => {
-            loadInventoryData();
-            loadRequestedItemsData();
-        });
-    </script>
-</body>
-</html>
+        <script type="module">
+            // Import Firebase modules
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+            import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+    
+            // Firebase configuration
+            const firebaseConfig = {
+                apiKey: "AIzaSyDeyt839rDGcoH3LwRWuc65_CUg6D6S5XE",
+                authDomain: "test-8cd9e.firebaseapp.com",
+                projectId: "test-8cd9e",
+                storageBucket: "test-8cd9e.appspot.com",
+                messagingSenderId: "745412020745",
+                appId: "1:745412020745:web:701eed8c9075a3572c86d8",
+                measurementId: "G-91P7MY8658"
+            };
+    
+            // Initialize Firebase
+            const app = initializeApp(firebaseConfig);
+            const db = getFirestore(app);
+    
+            // Function to load only the latest document for each product_id
+            const loadLatestData = () => {
+                try {
+                    console.log("Loading latest data...");
+                    const inventoryBody = document.getElementById('inventory-tableBody');
+    
+                    // Track the latest document for each product_id
+                    const latestProducts = {};
+    
+                    // Listen for real-time updates to the SR1 collection
+                    onSnapshot(collection(db, "SR3"), (querySnapshot) => {
+                        querySnapshot.forEach((docSnap) => {
+                            const data = docSnap.data();
+                            const productId = data.product_id;
+    
+                            // If the product_id is not in the latestProducts object or the current document is newer
+                            if (!latestProducts[productId] || latestProducts[productId].timestamp < data.timestamp) {
+                                latestProducts[productId] = data;
+                            }
+                        });
+    
+                        // Clear the table and populate it with the latest data for each product_id
+                        inventoryBody.innerHTML = "";
+                        Object.values(latestProducts).forEach((product) => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${product.product_id || ""}</td>
+                                <td>${product.product_name || ""}</td>
+                                <td>${product.quantity || ""}</td>
+                            `;
+                            inventoryBody.appendChild(row);
+                        });
+    
+                        console.log("Latest data loaded successfully!");
+                    });
+                } catch (error) {
+                    console.error("Error loading latest data:", error);
+                }
+            };
+    
+            // Load data on page load
+            window.addEventListener('DOMContentLoaded', () => {
+                loadLatestData();
+            });
+        </script>
+    </body>
+    </html>

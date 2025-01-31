@@ -14,42 +14,25 @@
         <p>Name - DILSHAN </p>
         <p>Shop ID - SH01 </p>
         <p>Main City - COLOMBO </p>
-        
     </section>
     <section id="inventory">
         <h2>Shop Stock</h2>
         <table id="inventory-table">
             <thead>
                 <tr>
-                    <th>Shop ID</th>
                     <th>Product ID</th>
                     <th>Item</th>
                     <th>Quantity</th>
                 </tr>
             </thead>
             <tbody id="inventory-tableBody">
-                <!-- All inventory items will be populated here -->
+                <!-- All recently updated data will be populated here -->
             </tbody>
         </table>
     </section>
-    <!--<section id="performance">
-        <h2>Requested Items</h2>
-        <table id="performance-table">
-            <thead>
-                <tr>
-                    <th>Shop ID</th>
-                    <th>Product ID</th>
-                    <th>Item</th>
-                    <th>Quantity</th>
-                </tr>
-            </thead>
-            <tbody id="performance-tableBody">
-                <!-- Requested items will be populated here -->
-            </tbody>
-        </table>
+    <section id="performance">
         <div class="button-container">
-          <!-- <button id="done">Done</button>-->
-          <button onclick="location.href='file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Sales%20rep/Rep%20Home/Repbase.html'">Back</button>
+            <button onclick="location.href='file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Sales%20rep/Rep%20Home/Repbase.html'">Back</button>
             <button onclick="location.href='file:///C:/Users/pakaya/Desktop/Inventiry%20mannagment/Dash%20board/Home%20page/home.html#report'">Home</button>
         </div>
     </section>
@@ -57,7 +40,7 @@
     <script type="module">
         // Import Firebase modules
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, query, where, Timestamp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
 
         // Firebase configuration
         const firebaseConfig = {
@@ -74,62 +57,47 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Function to load all data into the Inventory table
-        const loadInventoryData = async () => {
+        // Function to load all recently updated data
+        const loadRecentlyUpdatedData = () => {
             try {
-                console.log("Loading all inventory data...");
+                console.log("Loading recently updated data...");
                 const inventoryBody = document.getElementById('inventory-tableBody');
-                inventoryBody.innerHTML = ""; // Clear existing rows
 
-                const querySnapshot = await getDocs(collection(db, "shop_enter_data"));
-                querySnapshot.forEach((docSnap) => {
-                    const data = docSnap.data();
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${data["Shop Id"] || ""}</td>
-                        <td>${data.product_id || ""}</td>
-                        <td>${data.product_name || ""}</td>
-                        <td>${data.quantity || ""}</td>
-                    `;
-                    inventoryBody.appendChild(row);
+                // Define the time range for "recently updated" (e.g., last 24 hours)
+                const now = new Date();
+                const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000); // Last 24 hours
+
+                // Create a query to get all documents updated within the last 24 hours
+                const q = query(
+                    collection(db, "SH01"),
+                    where("timestamp", ">=", Timestamp.fromDate(twentyFourHoursAgo))
+                );
+
+                // Listen for real-time updates
+                onSnapshot(q, (querySnapshot) => {
+                    inventoryBody.innerHTML = ""; // Clear existing rows
+
+                    querySnapshot.forEach((docSnap) => {
+                        const data = docSnap.data();
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${data.product_id || ""}</td>
+                            <td>${data.product_name || ""}</td>
+                            <td>${data.quantity || ""}</td>
+                        `;
+                        inventoryBody.appendChild(row);
+                    });
+
+                    console.log("Recently updated data loaded successfully!");
                 });
-
-                console.log("All inventory data loaded successfully!");
             } catch (error) {
-                console.error("Error loading inventory data:", error);
-            }
-        };
-
-        // Function to load requested items data (for demonstration purposes, no filter applied)
-        const loadRequestedItemsData = async () => {
-            try {
-                console.log("Loading requested items...");
-                const performanceBody = document.getElementById('performance-tableBody');
-                performanceBody.innerHTML = ""; // Clear existing rows
-
-                const querySnapshot = await getDocs(collection(db, "shop_request_product"));
-                querySnapshot.forEach((docSnap) => {
-                    const data = docSnap.data();
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${data.shop_id || ""}</td>
-                        <td>${data.product_id || ""}</td>
-                        <td>${data.product_name || ""}</td>
-                        <td>${data.quantity || ""}</td>
-                    `;
-                    performanceBody.appendChild(row);
-                });
-
-                console.log("Requested items data loaded successfully!");
-            } catch (error) {
-                console.error("Error loading requested items data:", error);
+                console.error("Error loading recently updated data:", error);
             }
         };
 
         // Load data on page load
         window.addEventListener('DOMContentLoaded', () => {
-            loadInventoryData();
-            loadRequestedItemsData();
+            loadRecentlyUpdatedData();
         });
     </script>
 </body>
